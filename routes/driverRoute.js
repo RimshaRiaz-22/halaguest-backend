@@ -1,0 +1,10 @@
+const router = require("express").Router();
+const controller= require("../controllers/driverController")
+
+router.get("/allDrivers" ,controller.getAllDrivers)
+router.get("/specificDriver/:DriverId" , controller.getSpecificDriver)
+router.delete("/deleteDriver/:DriverId" , controller.deleteDriver);
+router.post("/createDriver" , controller.createDriver);
+router.put("/updateDriver" , controller.updateDriver);
+
+module.exports = router;
