@@ -1,6 +1,6 @@
 const dispacherModel= require("../models/dispacherModel");
 const mongoose = require("mongoose");
-
+const moment = require('moment');
 exports.getAllDispachers= (req,res)=>{
     dispacherModel.find({}, (error, result) => {
         if (error) {
@@ -32,6 +32,7 @@ exports.deleteDispacher= (req,res)=>{
     })
 }
 exports.createDispacher= async(req,res)=>{
+    const Createddate= req.body.created_at;
     const diapacher = new dispacherModel({
         _id: mongoose.Types.ObjectId(),
         payment_detail_id: req.body.payment_detail_id,
@@ -43,6 +44,10 @@ exports.createDispacher= async(req,res)=>{
         zip_code: req.body.zip_code,
         country: req.body.country,
         street_address: req.body.street_address,
+        phoneno: req.body.phoneno,
+        created_at: moment(Createddate).format("DD/MM/YYYY"),
+        status: req.body.status,
+        device_token: req.body.device_token
     });
     try {
         const savedDispacher = await diapacher.save();
@@ -65,6 +70,9 @@ exports.updateDispacher = async (req, res) => {
         zip_code: req.body.zip_code,
         country: req.body.country,
         street_address: req.body.street_address,
+        phoneno: req.body.phoneno,
+        status: req.body.status,
+        device_token: req.body.device_token
     }
     const options = {
         new: true

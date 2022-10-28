@@ -36,6 +36,11 @@ app.use("/api/condition" , require("./routes/conditionRoute"));
 app.use("/api/vehicle" , require("./routes/vehicleRoute"));
 app.use("/api/driver" , require("./routes/driverRoute"));
 app.use("/api/driverDoc" , require("./routes/driver_documentsRoute"));
+app.use("/api/phoneNo" , require("./routes/phoneNoCheckRoute"));
+app.use("/api/comission" , require("./routes/comissionRoute"));
+app.use("/api/driver_search_radius" , require("./routes/driver_search_radiusRoute"));
+app.use("/api/rate_per_km" , require("./routes/rate_per_kmRoute"));
+
 
 
 app.use('/upload-image', require('./upload-image'))

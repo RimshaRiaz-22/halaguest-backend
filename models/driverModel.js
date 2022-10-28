@@ -25,6 +25,13 @@ const driverSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'driver_documents'
     }],
+    phoneno:String,
+    created_at:String,
+    status: {
+        type: String,
+        enum: ['block', 'unblock']
+    },
+    device_token:String
 
 }
 );

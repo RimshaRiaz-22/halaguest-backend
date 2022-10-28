@@ -1,6 +1,6 @@
 const guestModel= require("../models/guestModel");
 const mongoose = require("mongoose");
-
+const moment = require('moment');
 exports.getAllGuests= (req,res)=>{
     guestModel.find({}, (error, result) => {
         if (error) {
@@ -32,6 +32,7 @@ exports.deleteGuest= (req,res)=>{
     })
 }
 exports.createGuest= async(req,res)=>{
+    const Createddate= req.body.created_at;
     const guest = new guestModel({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
@@ -44,7 +45,11 @@ exports.createGuest= async(req,res)=>{
         zip_code: req.body.zip_code,
         country: req.body.country,
         street_address: req.body.street_address,
-        hotel_id:req.body.hotel_id
+        hotel_id:req.body.hotel_id,
+        phoneno: req.body.phoneno,
+        created_at: moment(Createddate).format("DD/MM/YYYY"),
+        status: req.body.status,
+        device_token: req.body.device_token
     });
     try {
         const savedGuest = await guest.save();
@@ -68,7 +73,10 @@ exports.updateGuest = async (req, res) => {
         zip_code: req.body.zip_code,
         country: req.body.country,
         street_address: req.body.street_address,
-        hotel_id:req.body.hotel_id
+        hotel_id:req.body.hotel_id,
+        phoneno: req.body.phoneno,
+        status: req.body.status,
+        device_token: req.body.device_token
     }
     const options = {
         new: true

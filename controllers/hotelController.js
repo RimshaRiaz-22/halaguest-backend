@@ -1,6 +1,6 @@
 const hotelModel= require("../models/hotelModel");
 const mongoose = require("mongoose");
-
+const moment = require('moment');
 exports.getAllHotels= (req,res)=>{
     hotelModel.find({}, (error, result) => {
         if (error) {
@@ -32,6 +32,7 @@ exports.deleteHotel= (req,res)=>{
     })
 }
 exports.createHotel= async(req,res)=>{
+    const Createddate= req.body.created_at;
     const diapacher = new hotelModel({
         _id: mongoose.Types.ObjectId(),
         hotel_type_id: req.body.hotel_type_id,
@@ -44,6 +45,10 @@ exports.createHotel= async(req,res)=>{
         zip_code: req.body.zip_code,
         country: req.body.country,
         street_address: req.body.street_address,
+        phoneno: req.body.phoneno,
+        created_at: moment(Createddate).format("DD/MM/YYYY"),
+        status: req.body.status,
+        device_token: req.body.device_token
     });
     try {
         const savedHotel = await diapacher.save();
@@ -67,6 +72,9 @@ exports.updateHotel = async (req, res) => {
         zip_code: req.body.zip_code,
         country: req.body.country,
         street_address: req.body.street_address,
+        phoneno: req.body.phoneno,
+        status: req.body.status,
+        device_token: req.body.device_token
     }
     const options = {
         new: true

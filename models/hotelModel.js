@@ -17,6 +17,10 @@ const hotelSchema = new mongoose.Schema({
     zip_code: String,
     country: String,
     street_address: String,
+    phoneno:String,
+    created_at:String,
+    status:String,
+    device_token:String
 }
 );
 module.exports = mongoose.model("hotel", hotelSchema);

@@ -1,6 +1,6 @@
 const driverDocModel = require("../models/driver_documentsModel");
 const mongoose = require("mongoose");
-
+const moment = require('moment');
 exports.getAlldriverDocs= (req,res)=>{
     driverDocModel.find({},function(err, foundResult){
         try{
@@ -36,6 +36,7 @@ exports.deletedriverDoc= (req,res)=>{
     })
 }
 exports.createdriverDoc = async (req, res) => {
+    const Createddate= req.body.cnic_issue_date;
     const driverDoc = new driverDocModel({
         _id: mongoose.Types.ObjectId(),
         driving_license_front: req.body.driving_license_front,
@@ -43,7 +44,7 @@ exports.createdriverDoc = async (req, res) => {
         cnic_front: req.body.cnic_front,
         cnic_back: req.body.cnic_back,
         vehicle_ownership: req.body.vehicle_ownership,
-        cnic_issue_date: req.body.cnic_issue_date,
+        cnic_issue_date: moment(Createddate).format("DD/MM/YYYY"),
 
     });
     try {
@@ -57,13 +58,14 @@ exports.createdriverDoc = async (req, res) => {
     }
 }
 exports.updatedriverDoc = async (req, res) => {
+    const Createddate= req.body.cnic_issue_date;
     const updateData = {
         driving_license_front: req.body.driving_license_front,
         driving_license_back: req.body.driving_license_back,
         cnic_front: req.body.cnic_front,
         cnic_back: req.body.cnic_back,
         vehicle_ownership: req.body.vehicle_ownership,
-        cnic_issue_date: req.body.cnic_issue_date,
+        cnic_issue_date:  moment(Createddate).format("DD/MM/YYYY"),
     }
     const options = {
         new: true

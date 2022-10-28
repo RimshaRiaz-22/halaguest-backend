@@ -44,7 +44,7 @@ exports.createCondition = async (req, res) => {
         const savedAdmin = await Condition.save();
         res.json({
             data: savedAdmin,
-            message: "Car Type Created successfully"
+            message: "Condition Created successfully"
         })
     } catch (err) {
         res.status(400).send(err);

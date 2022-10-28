@@ -18,7 +18,10 @@ const guestSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'hotel'
     }],
-
+    phoneno:String,
+    created_at:String,
+    status:String,
+    device_token:String
 }
 );
 module.exports = mongoose.model("guest", guestSchema);
