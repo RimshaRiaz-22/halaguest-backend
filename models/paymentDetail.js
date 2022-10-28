@@ -6,6 +6,8 @@ const paymentDetailSchema = new mongoose.Schema({
     account_number: String,
     iban: String,
     swift_code: String,
+    expiry_date:String,
+    cvv:String
 }
 );
 module.exports = mongoose.model("payment_details", paymentDetailSchema);

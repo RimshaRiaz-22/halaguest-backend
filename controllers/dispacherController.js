@@ -8,7 +8,7 @@ exports.getAllDispachers= (req,res)=>{
         } else {
             res.send(result)
         }
-    }).populate("payment_detail_id")
+    }).sort({$natural:-1}).populate("payment_detail_id")
 }
 
 exports.getSpecificDispacher= (req,res)=>{

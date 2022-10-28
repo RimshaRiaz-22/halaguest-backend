@@ -8,7 +8,7 @@ exports.getAllHotels= (req,res)=>{
         } else {
             res.send(result)
         }
-    }).populate("payment_detail_id").populate("hotel_type_id")
+    }).sort({$natural:-1}).populate("payment_detail_id").populate("hotel_type_id")
 }
 
 exports.getSpecificHotel= (req,res)=>{

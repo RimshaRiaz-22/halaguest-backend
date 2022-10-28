@@ -8,7 +8,7 @@ exports.getAllGuests= (req,res)=>{
         } else {
             res.send(result)
         }
-    }).populate("hotel_id")
+    }).sort({$natural:-1}).populate("hotel_id")
 }
 
 exports.getSpecificGuest= (req,res)=>{
@@ -20,6 +20,16 @@ exports.getSpecificGuest= (req,res)=>{
             res.json(err)
         }
     }).populate("hotel_id")
+}
+exports.getHotelGuests= (req,res)=>{
+    const HotelId = req.params.hotel_id;
+    guestModel.find({hotel_id:HotelId}, (error, result) => {
+        if (error) {
+            res.send(error)
+        } else {
+            res.send(result)
+        }
+    }).sort({$natural:-1})
 }
 exports.deleteGuest= (req,res)=>{
     const GuestId = req.params.GuestId;

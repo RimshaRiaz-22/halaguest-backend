@@ -17,6 +17,10 @@ const driverSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'dispacher'
     }],
+    payment_detail_id: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'payment_details'
+    }],
     vehicle_detail_id: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'vehicle_detail'

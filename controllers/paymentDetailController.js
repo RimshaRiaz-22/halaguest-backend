@@ -1,5 +1,6 @@
 const paymentDetailModel = require("../models/paymentDetail");
 const mongoose = require("mongoose");
+const moment = require('moment');
 
 exports.getAllpaymentDetails= (req,res)=>{
     paymentDetailModel.find({},function(err, foundResult){
@@ -36,6 +37,7 @@ exports.deletepaymentDetail= (req,res)=>{
     })
 }
 exports.createPaymentDetail = async (req, res) => {
+    const Createddate= req.body.expiry_date;
     const paymentDetail = new paymentDetailModel({
         _id: mongoose.Types.ObjectId(),
         bank_name: req.body.bank_name,
@@ -43,6 +45,8 @@ exports.createPaymentDetail = async (req, res) => {
         account_number: req.body.account_number,
         iban: req.body.iban,
         swift_code: req.body.swift_code,
+        expiry_date: moment(Createddate).format("DD/MM/YYYY"),
+        cvv:req.body.cvv
     });
     try {
         const savedAdmin = await paymentDetail.save();
@@ -55,12 +59,15 @@ exports.createPaymentDetail = async (req, res) => {
     }
 }
 exports.updatePaymentDetail = async (req, res) => {
+    const Createddate= req.body.expiry_date;
     const updateData = {
         bank_name: req.body.bank_name,
         account_holder_name: req.body.account_holder_name,
         account_number: req.body.account_number,
         iban: req.body.iban,
         swift_code: req.body.swift_code,
+        expiry_date: moment(Createddate).format("DD/MM/YYYY"),
+        cvv:req.body.cvv
     }
     const options = {
         new: true
