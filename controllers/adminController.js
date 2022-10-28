@@ -1,80 +1,112 @@
-const adminModel= require("../models/adminModel");
-const bcrypt = require("bcryptjs");
+const adminModel = require("../models/adminModel");
+const mongoose = require("mongoose");
+const bcrypt = require('bcrypt')
 
-exports.getAllAdmins= (req,res)=>{
-    adminModel.find({},function(err, foundResult){
-        try{
-            res.json(foundResult)
-        }catch(err){
-            res.json(err)
+exports.getAlladmins = (req, res) => {
+    adminModel.find({}, (error, result) => {
+        if (error) {
+            res.send(error)
+        } else {
+            res.send(result)
         }
-    })
+    }).sort({ $natural: -1 })
 }
 
-exports.getSpecificAdmin= (req,res)=>{
+exports.getSpecificadmin = (req, res) => {
     const adminId = req.params.adminId;
-    adminModel.find({_id:adminId},function(err, foundResult){
-        try{
+    adminModel.find({ _id: adminId }, function (err, foundResult) {
+        try {
             res.json(foundResult)
-        }catch(err){
+        } catch (err) {
             res.json(err)
         }
     })
 }
-exports.deleteAdmin= (req,res)=>{
-    const adminId = req.params.adminId;
-    adminModel.deleteOne({_id:adminId},function(err, foundResult){
-        try{
-            res.json(foundResult)
-        }catch(err){
-            res.json(err)
-        }
-    })
-}
-
-exports.updatePassword=async (req,res)=>{
-
-    const email=req.body.email;
-    const newPassword=req.body.newPassword;
-    const adminId = req.body.adminId;
-
-
-    if(email && newPassword && adminId !==null && typeof email && typeof newPassword && typeof adminId !=="undefined"){
-        const salt = await bcrypt.genSalt(10);
-        const hashPassword = await bcrypt.hash(newPassword, salt);
-        adminModel.findOneAndUpdate({
-            email:email,
-            _id:adminId,
-            },
-            {
-              password:hashPassword
-            }, 
-            function(err, result) 
-            { 
-               
-                if(result){
-                    console.log("password updated successfully") 
-                    res.json({
-                        message: "password updated successfully",
-                        success: true,
-                        result:result
-                        
-                    })
-                } else{
-                    res.json({
-                        message: "could'nt update admin password",
-                        success: false,
-                        error:err,
-                        data:result
-                    })
+exports.loginAdmin = (req, res) => {
+    const findUser = {
+        email: req.body.email
+    }
+    adminModel.findOne(findUser, (error, result) => {
+        if (error) {
+            res.send(error)
+        } else {
+            if (result) {
+                if (bcrypt.compareSync(req.body.password, result.password)) {
+                   res.send(result)
+                } else {
+                    res.sendStatus(401)
                 }
-        });
-    }
-    else{
-        res.json({
-            message:"email , newPassword or adminId may be null or undefined",
-        })
-    }
-
-     
+            } else {
+                res.sendStatus(404)
+            }
+        }
+    })
 }
+exports.deleteadmin = (req, res) => {
+    const adminId = req.params.adminId;
+    adminModel.deleteOne({ _id: adminId }, function (err, foundResult) {
+        try {
+            res.json(foundResult)
+        } catch (err) {
+            res.json(err)
+        }
+    })
+}
+exports.createadmin = async (req, res) => {
+    const hashedPassword = bcrypt.hashSync(req.body.password, 12)
+    adminModel.find({ email: req.body.email }, (error, result) => {
+        if (error) {
+            res.send(error)
+        } else {
+            // res.send(result)
+            if (result === undefined || result.length == 0) {
+                const admin = new adminModel({
+                    _id: mongoose.Types.ObjectId(),
+                    username: req.body.username,
+                    email: req.body.email,
+                    password: hashedPassword,
+                    img: req.body.img,
+                    privacy_policy: req.body.privacy_policy,
+                    terms_and_conditions: req.body.terms_and_conditions,
+
+                });
+                admin.save((error, result) => {
+                    if (error) {
+                        res.send(error)
+                    } else {
+                        res.send(result)
+                    }
+                })
+
+            } else {
+                res.send("Email Already Exist")
+
+            }
+        }
+    })
+
+}
+exports.updateadmin = async (req, res) => {
+    const hashedPassword = bcrypt.hashSync(req.body.password, 12)
+    const updateData = {
+        username: req.body.username,
+        email: req.body.email,
+        password: hashedPassword,
+        img: req.body.img,
+        privacy_policy: req.body.privacy_policy,
+        terms_and_conditions: req.body.terms_and_conditions,
+    }
+    const options = {
+        new: true
+    }
+    adminModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+        if (error) {
+            res.send(error)
+        } else {
+            res.send(result)
+        }
+    })
+}
+
+
+

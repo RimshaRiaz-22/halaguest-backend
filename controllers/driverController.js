@@ -9,7 +9,7 @@ exports.getAllDrivers = (req, res) => {
         } else {
             res.send(result)
         }
-    }).sort({$natural:-1}).populate("dispacher_id").populate("vehicle_detail_id").populate("doc_id").populate("payment_detail_id")
+    }).sort({$natural:-1}).populate("dispacher_id").populate("vehicle_detail_id").populate("doc_id")
 }
 exports.getDispacherDriver= (req,res)=>{
     const DispacherId = req.params.dispacher_id;
@@ -30,7 +30,7 @@ exports.getSpecificDriver = (req, res) => {
         } catch (err) {
             res.json(err)
         }
-    }).populate("dispacher_id").populate("vehicle_detail_id").populate("doc_id").populate("payment_detail_id")
+    }).populate("dispacher_id").populate("vehicle_detail_id").populate("doc_id")
 }
 exports.deleteDriver = (req, res) => {
     const DriverId = req.params.DriverId;
@@ -60,7 +60,6 @@ exports.createDriver = async (req, res) => {
         dispacher_id: req.body.dispacher_id,
         vehicle_detail_id: req.body.vehicle_detail_id,
         doc_id: req.body.doc_id,
-        payment_detail_id:req.body.payment_detail_id,
         phoneno: req.body.phoneno,
         created_at: moment(Createddate).format("DD/MM/YYYY"),
         status: req.body.status,
@@ -90,7 +89,6 @@ exports.updateDriver = async (req, res) => {
         street_address: req.body.street_address,
         dispacher_id: req.body.dispacher_id,
         vehicle_detail_id: req.body.vehicle_detail_id,
-        payment_detail_id:req.body.payment_detail_id,
         doc_id: req.body.doc_id,
         phoneno: req.body.phoneno,
         status: req.body.status,

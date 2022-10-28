@@ -1,8 +1,6 @@
 const NotificationDetailModel = require("../models/notificationModel");
 const mongoose = require("mongoose");
 const moment = require('moment');
-const adminModel = require("../models/adminModel");
-
 exports.getAllNotificationDetails= (req,res)=>{
     NotificationDetailModel.find({},function(err, foundResult){
         try{

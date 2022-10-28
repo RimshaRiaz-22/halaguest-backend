@@ -20,8 +20,11 @@ const guestSchema = new mongoose.Schema({
     }],
     phoneno:String,
     created_at:String,
-    status:String,
-    device_token:String
+    device_token:String,
+    status: {
+        type: String,
+        enum: ['block', 'unblock']
+    },
 }
 );
 module.exports = mongoose.model("guest", guestSchema);

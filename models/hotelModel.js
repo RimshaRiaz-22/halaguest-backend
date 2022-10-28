@@ -19,8 +19,11 @@ const hotelSchema = new mongoose.Schema({
     street_address: String,
     phoneno:String,
     created_at:String,
-    status:String,
-    device_token:String
+    device_token:String,
+    status: {
+        type: String,
+        enum: ['block', 'unblock']
+    },
 }
 );
 module.exports = mongoose.model("hotel", hotelSchema);
