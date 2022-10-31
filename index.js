@@ -43,6 +43,9 @@ app.use("/api/rate_per_km" , require("./routes/rate_per_kmRoute"));
 app.use("/api/sms" , require("./routes/sendSMS"));
 app.use("/api/notification" , require("./routes/notificationRoute"));
 app.use("/api/admin" , require("./routes/adminRoute"));
+app.use("/api/Msg" , require("./routes/msgRoute"));
+app.use("/api/Order" , require("./routes/orderRoute"));
+
 
 
 

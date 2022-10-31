@@ -31,8 +31,23 @@ const driverSchema = new mongoose.Schema({
         type: String,
         enum: ['block', 'unblock']
     },
-    device_token:String
+    device_token:String,
+    driver_location:String,
+    driver_lat:String,
+    driver_log:String,
+    location: {
+        // type: {
+        //   type: String,
+        //   enum: ['Point'],
+        //   default: 'Point',
+        // },
+        // coordinates: {
+          type: [Number],
+          default: [0, 0]
+    //     }
+      }
 
 }
 );
+driverSchema.index({location:"2dsphere"});
 module.exports = mongoose.model("driver", driverSchema);

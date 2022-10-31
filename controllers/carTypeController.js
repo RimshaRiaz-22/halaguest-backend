@@ -39,6 +39,7 @@ exports.createcarType = async (req, res) => {
     const carType = new carTypeModel({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
+        price:req.body.price
     });
     try {
         const savedAdmin = await carType.save();
@@ -53,6 +54,7 @@ exports.createcarType = async (req, res) => {
 exports.updatecarType = async (req, res) => {
     const updateData = {
         name: req.body.name,
+        price:req.body.price
     }
     const options = {
         new: true

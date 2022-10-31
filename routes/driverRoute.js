@@ -7,5 +7,7 @@ router.delete("/deleteDriver/:DriverId" , controller.deleteDriver);
 router.get("/getDispacherDriver/:dispacher_id" , controller.getDispacherDriver);
 router.post("/createDriver" , controller.createDriver);
 router.put("/updateDriver" , controller.updateDriver);
+router.get("/searchOrder" , controller.getSearchOrder);
+
 
 module.exports = router;

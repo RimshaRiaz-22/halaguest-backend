@@ -5,6 +5,7 @@ const car_typeSchema = new mongoose.Schema({
         type: String,
         enum: ['luxury', 'economy','VVIP']
     },
+    price:String
 }
 );
 module.exports = mongoose.model("car_type", car_typeSchema);

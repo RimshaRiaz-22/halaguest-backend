@@ -8,7 +8,21 @@ exports.getAllGuests= (req,res)=>{
         } else {
             res.send(result)
         }
-    }).sort({$natural:-1}).populate("hotel_id")
+    }).sort({$natural:-1})
+    .populate({ 
+        path: 'hotel_id',
+        populate: {
+          path: 'hotel_type_id',
+          model: 'hotel_type',
+        }
+     }) .populate({ 
+        path: 'hotel_id',
+        populate: {
+          path: 'payment_detail_id',
+          model: 'payment_details',
+        }
+     })
+    // .populate("hotel_id")
 }
 
 exports.getSpecificGuest= (req,res)=>{
@@ -19,7 +33,19 @@ exports.getSpecificGuest= (req,res)=>{
         }catch(err){
             res.json(err)
         }
-    }).populate("hotel_id")
+    })  .populate({ 
+        path: 'hotel_id',
+        populate: {
+          path: 'hotel_type_id',
+          model: 'hotel_type',
+        }
+     }) .populate({ 
+        path: 'hotel_id',
+        populate: {
+          path: 'payment_detail_id',
+          model: 'payment_details',
+        }
+     })
 }
 exports.getHotelGuests= (req,res)=>{
     const HotelId = req.params.hotel_id;

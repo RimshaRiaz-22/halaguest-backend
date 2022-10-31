@@ -1,6 +1,7 @@
 const DriverModel = require("../models/driverModel");
 const mongoose = require("mongoose");
 const moment = require('moment');
+const driverModel = require("../models/driverModel");
 
 exports.getAllDrivers = (req, res) => {
     DriverModel.find({}, (error, result) => {
@@ -9,17 +10,53 @@ exports.getAllDrivers = (req, res) => {
         } else {
             res.send(result)
         }
-    }).sort({$natural:-1}).populate("dispacher_id").populate("vehicle_detail_id").populate("doc_id")
+    }).sort({ $natural: -1 })
+        .populate({
+            path: 'dispacher_id',
+            populate: {
+                path: 'payment_detail_id',
+                model: 'payment_details',
+            }
+        })
+        .populate({
+            path: 'vehicle_detail_id',
+            populate: {
+                path: 'condition_id',
+                model: 'condition',
+            }
+        })
+        .populate({
+            path: 'vehicle_detail_id',
+            populate: {
+                path: 'car_type_id',
+                model: 'car_type',
+            }
+        })
+        .populate("doc_id")
 }
-exports.getDispacherDriver= (req,res)=>{
+exports.getDispacherDriver = (req, res) => {
     const DispacherId = req.params.dispacher_id;
-    DriverModel.find({dispacher_id:DispacherId}, (error, result) => {
+    DriverModel.find({ dispacher_id: DispacherId }, (error, result) => {
         if (error) {
             res.send(error)
         } else {
             res.send(result)
         }
-    }).sort({$natural:-1})
+    }).sort({ $natural: -1 }).populate({
+        path: 'vehicle_detail_id',
+        populate: {
+            path: 'condition_id',
+            model: 'condition',
+        }
+    })
+        .populate({
+            path: 'vehicle_detail_id',
+            populate: {
+                path: 'car_type_id',
+                model: 'car_type',
+            }
+        })
+        .populate("doc_id")
 }
 
 exports.getSpecificDriver = (req, res) => {
@@ -30,7 +67,28 @@ exports.getSpecificDriver = (req, res) => {
         } catch (err) {
             res.json(err)
         }
-    }).populate("dispacher_id").populate("vehicle_detail_id").populate("doc_id")
+    }).populate({
+        path: 'dispacher_id',
+        populate: {
+            path: 'payment_detail_id',
+            model: 'payment_details',
+        }
+    })
+        .populate({
+            path: 'vehicle_detail_id',
+            populate: {
+                path: 'condition_id',
+                model: 'condition',
+            }
+        })
+        .populate({
+            path: 'vehicle_detail_id',
+            populate: {
+                path: 'car_type_id',
+                model: 'car_type',
+            }
+        })
+        .populate("doc_id")
 }
 exports.deleteDriver = (req, res) => {
     const DriverId = req.params.DriverId;
@@ -44,7 +102,7 @@ exports.deleteDriver = (req, res) => {
 }
 exports.createDriver = async (req, res) => {
     // console.log(new Date)
-    const Createddate= req.body.created_at;
+    const Createddate = req.body.created_at;
     const Driver = new DriverModel({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
@@ -63,7 +121,21 @@ exports.createDriver = async (req, res) => {
         phoneno: req.body.phoneno,
         created_at: moment(Createddate).format("DD/MM/YYYY"),
         status: req.body.status,
-        device_token: req.body.device_token
+        device_token: req.body.device_token,
+        driver_location: req.body.driver_location,
+        driver_lat: req.body.driver_lat,
+        driver_log: req.body.driver_log,
+        // coordinates:[]
+        location:
+        //  {
+            // coordinates:
+             [
+                req.body.driver_lat,         //<INDEXED as 2d>
+                req.body.driver_log,
+            ]
+        // }
+
+
     });
     try {
         const savedDriver = await Driver.save();
@@ -92,7 +164,10 @@ exports.updateDriver = async (req, res) => {
         doc_id: req.body.doc_id,
         phoneno: req.body.phoneno,
         status: req.body.status,
-        device_token: req.body.device_token
+        device_token: req.body.device_token,
+        driver_location: req.body.driver_location,
+        driver_lat: req.body.driver_lat,
+        driver_log: req.body.driver_log,
     }
     const options = {
         new: true
@@ -104,6 +179,51 @@ exports.updateDriver = async (req, res) => {
             res.send(result)
         }
     })
+}
+
+exports.getSearchOrder = (req, res) => {
+    const ConditionId = req.body.condition_id;
+    const CarTypeId = req.body.car_type_id;
+    const Ac = req.body.ac;
+    const Location_lat = req.body.location_lat;
+    const Location_log = req.body.location_log;
+    // console.log(Location_lat)
+    // DriverModel.aggregate([{
+    //     $geoNear: {
+    //         near: {type: "Point", coordinates: [ Location_lat, Location_log ]},
+    //         distanceField: "location",
+    //         minDistance:0,
+    //         maxDistance:5000,
+    //         spherical: true
+    //     }
+    // }], function(err, resp){
+    //     console.log(resp)
+    // })
+  DriverModel.find({
+        // vehicle_detail_id:req.body.vehicle_detail_id
+        // 'vehicle_detail_id[0].condition_id': ConditionId,
+        // 'vehicle_detail_id[0].car_type_id': CarTypeId,
+        // 'vehicle_detail_id[0].ac': Ac,
+            $geoNear: {
+                near: { type: "Point", coordinates: [ Location_lat,  Location_log ] },
+                distanceField: "location",
+                minDistance: 2,
+                query: { type: "public" },
+                // includeLocs: "dist.location",
+                num: 5,
+                spherical: true
+             }
+       
+       
+
+}
+, (error, result) => {
+    if (error) {
+        res.send(error)
+    } else {
+        res.send(result)
+    }
+}).sort({ $natural: -1 })
 }
 
 
