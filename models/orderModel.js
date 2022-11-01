@@ -39,6 +39,10 @@ const orderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'driver'
     },
+    Invoice: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'invoice'
+    }]
 
 }
 );

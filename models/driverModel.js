@@ -9,7 +9,7 @@ const driverSchema = new mongoose.Schema({
     country: String,
     street_address: String,
     name: String,
-    gender:  {
+    gender: {
         type: String,
         enum: ['male', 'female']
     },
@@ -25,29 +25,41 @@ const driverSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'driver_documents'
     }],
-    phoneno:String,
-    created_at:String,
+    phoneno: String,
+    created_at: String,
     status: {
         type: String,
         enum: ['block', 'unblock']
     },
-    device_token:String,
-    driver_location:String,
-    driver_lat:String,
-    driver_log:String,
-    location: {
-        // type: {
-        //   type: String,
-        //   enum: ['Point'],
-        //   default: 'Point',
-        // },
-        // coordinates: {
-          type: [Number],
-          default: [0, 0]
+    device_token: String,
+    driver_location: String,
+    driver_lat: String,
+    driver_log: String,
+    // location: {
+    //     type: {
+    //       type: String,
+    //       enum: ['Point'],
+    //       default: 'Point',
+    //     },
+    //     coordinates: {
+    //       type: [Number],
+    //       default: [0, 0]
     //     }
-      }
+    //   }
+    location: {
+        type: {
+            type: String,
+            enum: ['Point']
+        },
+        coordinates: {
+            type: [Number]
+        }
+    }
+},
+    {
+        timestamps: true
+    }
 
-}
 );
-driverSchema.index({location:"2dsphere"});
+driverSchema.index({ location: "2dsphere" });
 module.exports = mongoose.model("driver", driverSchema);

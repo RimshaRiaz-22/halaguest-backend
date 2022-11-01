@@ -126,14 +126,19 @@ exports.createDriver = async (req, res) => {
         driver_lat: req.body.driver_lat,
         driver_log: req.body.driver_log,
         // coordinates:[]
-        location:
-        //  {
-            // coordinates:
-             [
-                req.body.driver_lat,         //<INDEXED as 2d>
-                req.body.driver_log,
-            ]
+        // location:
+        //      {
+        //     coordinates:
+        //     [
+        //         req.body.driver_log,
+        //         req.body.driver_lat        //<INDEXED as 2d>
+
+        //     ]
         // }
+        location: {
+            type: 'Point',
+            coordinates: [req.body.driver_log, req.body.driver_lat]
+        }
 
 
     });
@@ -181,7 +186,7 @@ exports.updateDriver = async (req, res) => {
     })
 }
 
-exports.getSearchOrder = (req, res) => {
+exports.getSearchOrder = async (req, res) => {
     const ConditionId = req.body.condition_id;
     const CarTypeId = req.body.car_type_id;
     const Ac = req.body.ac;
@@ -199,31 +204,68 @@ exports.getSearchOrder = (req, res) => {
     // }], function(err, resp){
     //     console.log(resp)
     // })
-  DriverModel.find({
-        // vehicle_detail_id:req.body.vehicle_detail_id
-        // 'vehicle_detail_id[0].condition_id': ConditionId,
-        // 'vehicle_detail_id[0].car_type_id': CarTypeId,
-        // 'vehicle_detail_id[0].ac': Ac,
-            $geoNear: {
-                near: { type: "Point", coordinates: [ Location_lat,  Location_log ] },
-                distanceField: "location",
-                minDistance: 2,
-                query: { type: "public" },
-                // includeLocs: "dist.location",
-                num: 5,
-                spherical: true
-             }
-       
-       
+    //     DriverModel.find({
+    //         // vehicle_detail_id:req.body.vehicle_detail_id
+    //         // 'vehicle_detail_id[0].condition_id': ConditionId,
+    //         // 'vehicle_detail_id[0].car_type_id': CarTypeId,
+    //         // 'vehicle_detail_id[0].ac': Ac,
+    //         // $geoNear: {
+    //         //     near: { type: "Point", coordinates: [ Location_lat,  Location_log ] },
+    //         //     distanceField: "location",
+    //         //     minDistance: 0,
+    //         //     maxDistance: 2000,
+    //         //     query: { type: "public" },
+    //         //     // includeLocs: "dist.location",
+    //         //     num: 5,
+    //         //     spherical: true
+    //         //  }
+    //         location: {
+    //             $near:{
+    //             $geometry: {
+    //                 type: "Point",
+    //                 coordinates: [Location_log, Location_lat]
+    //             },
+    //             $minDistance: 1000,
+    //             $maxDistance: 5000,
+    //             spherical: true
+    //         }
+    //        }
 
-}
-, (error, result) => {
-    if (error) {
-        res.send(error)
-    } else {
-        res.send(result)
-    }
-}).sort({ $natural: -1 })
+
+    // }
+    // , (error, result) => {
+    //     if (error) {
+    //         res.send(error)
+    //     } else {
+    //         res.send(result)
+    //     }
+    // }).sort({ $natural: -1 })
+
+    const users = await DriverModel.aggregate([
+        {
+            $geoNear: {
+                near: {
+                    type: 'Point',
+                    coordinates: [Number(Location_log), Number(Location_lat)]
+                },
+                maxDistance: 5000,
+                distanceField: 'distance',
+            },
+        },
+       
+        // {
+        //     $match: {
+        //         vehicle_detail_id:req.body.vehicle_detail_id
+        //         // 'vehicle_detail_id[0].condition_id': ConditionId,
+        //         // 'vehicle_detail_id[0].car_type_id': CarTypeId,
+        //         // 'vehicle_detail_id[0].ac': Ac,
+        //     }
+        // },
+
+    ]);
+    return res.json(users)
+
+  
 }
 
 

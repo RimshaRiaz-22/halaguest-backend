@@ -45,6 +45,8 @@ app.use("/api/notification" , require("./routes/notificationRoute"));
 app.use("/api/admin" , require("./routes/adminRoute"));
 app.use("/api/Msg" , require("./routes/msgRoute"));
 app.use("/api/Order" , require("./routes/orderRoute"));
+app.use("/api/invoice" , require("./routes/invoiceRoute"));
+
 
 
 
