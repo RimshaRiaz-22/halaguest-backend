@@ -54,8 +54,12 @@ const driverSchema = new mongoose.Schema({
         coordinates: {
             type: [Number]
         }
-    }
-},
+    },
+    ratings: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'rating'
+    }]
+    },
     {
         timestamps: true
     }

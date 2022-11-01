@@ -4,7 +4,7 @@ const bodyParser = require("body-parser")
 const app= express();
 const PORT = 4000;
 const cors = require('cors');
-
+const socket = require("socket.io");
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors({
@@ -12,8 +12,6 @@ app.use(cors({
 }));
 
 require('dotenv').config()
-
-
 //connect to db
 mongoose.connect(
     process.env.DB_CONNECTION, {
@@ -46,13 +44,32 @@ app.use("/api/admin" , require("./routes/adminRoute"));
 app.use("/api/Msg" , require("./routes/msgRoute"));
 app.use("/api/Order" , require("./routes/orderRoute"));
 app.use("/api/invoice" , require("./routes/invoiceRoute"));
-
-
-
-
+app.use("/api/Rating" , require("./routes/ratingRoute"));
 
 app.use('/upload-image', require('./upload-image'))
-
 const server= app.listen(PORT, function () {
     console.log("server started on port 4000")
 })
+// Sockets
+const io = socket(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      credentials: true,
+    },
+  });
+  
+  global.onlineUsers = new Map();
+  io.on("connection", (socket) => {
+    global.chatSocket = socket;
+    socket.on("add-user", (userId) => {
+      onlineUsers.set(userId, socket.id);
+    });
+  
+    socket.on("send-msg", (data) => {
+      const sendUserSocket = onlineUsers.get(data.to);
+      if (sendUserSocket) {
+        socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+      }
+    });
+  });
+  
