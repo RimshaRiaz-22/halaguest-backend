@@ -50,26 +50,25 @@ app.use('/upload-image', require('./upload-image'))
 const server= app.listen(PORT, function () {
     console.log("server started on port 4000")
 })
-// Sockets
+//Sockets
 const io = socket(server, {
-    cors: {
-      origin: "http://localhost:3000",
-      credentials: true,
-    },
+  cors: {
+    origin: "http://localhost:3000",
+    credentials: true,
+  },
+});
+
+global.onlineUsers = new Map();
+io.on("connection", (socket) => {
+  global.chatSocket = socket;
+  socket.on("add-user", (userId) => {
+    onlineUsers.set(userId, socket.id);
   });
-  
-  global.onlineUsers = new Map();
-  io.on("connection", (socket) => {
-    global.chatSocket = socket;
-    socket.on("add-user", (userId) => {
-      onlineUsers.set(userId, socket.id);
-    });
-  
-    socket.on("send-msg", (data) => {
-      const sendUserSocket = onlineUsers.get(data.to);
-      if (sendUserSocket) {
-        socket.to(sendUserSocket).emit("msg-recieve", data.msg);
-      }
-    });
+
+  socket.on("send-msg", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+    }
   });
-  
+});

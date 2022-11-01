@@ -1,12 +1,14 @@
 const MessageModel = require("../models/msgModel");
+const usersModel = require("../models/usersModel");
 
 exports.addMsg = (req, res) => {
     try {
-        const { from, to, message } = req.body;
+        const { from, to, message,order_id } = req.body;
         const data = MessageModel.create({
           message: { text: message },
           users: [from, to],
           sender: from,
+          order_id:order_id
         });
     
         if (data) return res.json({ msg: "Message added successfully." });
@@ -18,10 +20,10 @@ exports.addMsg = (req, res) => {
 
 exports.getMsg = (req, res) => {
     try {
-        const { from, to } = req.body;
+        const { from, to ,order_id} = req.body;
         const messages = MessageModel.find({ users: {
                     $all: [from, to],
-                }
+                },order_id:order_id
             }, (error, result) => {
             if (error) {
                 res.send(error)
@@ -39,4 +41,14 @@ exports.getMsg = (req, res) => {
     } catch (ex) {
         next(ex);
     }
+}
+exports.getUsersByOrder = (req, res) => {
+    const orderId = req.params.orderId;
+    usersModel.find({ order_id:orderId }, function (err, foundResult) {
+        try {
+          res.json(foundResult)
+        } catch (err) {
+          res.json(err)
+        }
+      })
 }
