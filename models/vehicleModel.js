@@ -19,6 +19,10 @@ const vehicleSchema = new mongoose.Schema({
         type: String,
         enum: ['yes', 'no']
     },
+    driver_Id: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'driver'
+    }],
 
 }
 );

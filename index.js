@@ -22,6 +22,7 @@ mongoose.connect(
 );
 //middleware
 app.use(express.json());
+app.use('/image-uploads', express.static('image-uploads'))
 //Routes
 app.use("/api/admin" , require("./routes/adminRoute"));
 app.use("/api/dispacher" , require("./routes/dispacherRoute"));
@@ -47,6 +48,7 @@ app.use("/api/invoice" , require("./routes/invoiceRoute"));
 app.use("/api/Rating" , require("./routes/ratingRoute"));
 
 app.use('/upload-image', require('./upload-image'))
+app.use('/delete-image', require('./delete-image'))
 const server= app.listen(PORT, function () {
     console.log("server started on port 4000")
 })

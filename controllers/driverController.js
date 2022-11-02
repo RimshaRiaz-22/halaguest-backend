@@ -1,7 +1,7 @@
 const DriverModel = require("../models/driverModel");
 const mongoose = require("mongoose");
 const moment = require('moment');
-const driverModel = require("../models/driverModel");
+const vehicleModel = require("../models/vehicleModel");
 
 exports.getAllDrivers = (req, res) => {
     DriverModel.find({}, (error, result) => {
@@ -125,16 +125,6 @@ exports.createDriver = async (req, res) => {
         driver_location: req.body.driver_location,
         driver_lat: req.body.driver_lat,
         driver_log: req.body.driver_log,
-        // coordinates:[]
-        // location:
-        //      {
-        //     coordinates:
-        //     [
-        //         req.body.driver_log,
-        //         req.body.driver_lat        //<INDEXED as 2d>
-
-        //     ]
-        // }
         location: {
             type: 'Point',
             coordinates: [req.body.driver_log, req.body.driver_lat]
@@ -153,119 +143,129 @@ exports.createDriver = async (req, res) => {
     }
 }
 exports.updateDriver = async (req, res) => {
-    const updateData = {
-        name: req.body.name,
-        gender: req.body.gender,
-        details: req.body.details,
-        email: req.body.email,
-        img: req.body.img,
-        city: req.body.city,
-        state: req.body.state,
-        zip_code: req.body.zip_code,
-        country: req.body.country,
-        street_address: req.body.street_address,
-        dispacher_id: req.body.dispacher_id,
-        vehicle_detail_id: req.body.vehicle_detail_id,
-        doc_id: req.body.doc_id,
-        phoneno: req.body.phoneno,
-        status: req.body.status,
-        device_token: req.body.device_token,
-        driver_location: req.body.driver_location,
-        driver_lat: req.body.driver_lat,
-        driver_log: req.body.driver_log,
-    }
-    const options = {
-        new: true
-    }
-    DriverModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
-        if (error) {
-            res.send(error)
-        } else {
-            res.send(result)
+    if (req.body.vehicle_detail_id === '') {
+        const updateData = {
+            name: req.body.name,
+            gender: req.body.gender,
+            details: req.body.details,
+            email: req.body.email,
+            img: req.body.img,
+            city: req.body.city,
+            state: req.body.state,
+            zip_code: req.body.zip_code,
+            country: req.body.country,
+            street_address: req.body.street_address,
+            dispacher_id: req.body.dispacher_id,
+            vehicle_detail_id: req.body.vehicle_detail_id,
+            doc_id: req.body.doc_id,
+            phoneno: req.body.phoneno,
+            status: req.body.status,
+            device_token: req.body.device_token,
+            driver_location: req.body.driver_location,
+            driver_lat: req.body.driver_lat,
+            driver_log: req.body.driver_log,
         }
-    })
+        const options = {
+            new: true
+        }
+        DriverModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+            if (error) {
+                res.send(error)
+            } else {
+                res.send(result)
+            }
+        })
+    } else {
+        vehicleModel.find({ _id: req.body.vehicle_detail_id }, function (err, foundResult) {
+            try {
+                const vehicle_condition_id = foundResult[0].condition_id;
+                const vehicle_car_type_id = foundResult[0].car_type_id;
+                const vehicle_ac = foundResult[0].ac;
+                const updateData = {
+                    name: req.body.name,
+                    gender: req.body.gender,
+                    details: req.body.details,
+                    email: req.body.email,
+                    img: req.body.img,
+                    city: req.body.city,
+                    state: req.body.state,
+                    zip_code: req.body.zip_code,
+                    country: req.body.country,
+                    street_address: req.body.street_address,
+                    dispacher_id: req.body.dispacher_id,
+                    vehicle_detail_id: req.body.vehicle_detail_id,
+                    vehicle_condition_id: vehicle_condition_id,
+                    vehicle_car_type_id: vehicle_car_type_id,
+                    vehicle_ac: vehicle_ac,
+                    doc_id: req.body.doc_id,
+                    phoneno: req.body.phoneno,
+                    status: req.body.status,
+                    device_token: req.body.device_token,
+                    driver_location: req.body.driver_location,
+                    driver_lat: req.body.driver_lat,
+                    driver_log: req.body.driver_log,
+                }
+                const options = {
+                    new: true
+                }
+                DriverModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+                    if (error) {
+                        res.send(error)
+                    } else {
+                        res.send(result)
+                        const updateData1 = {
+                            $push: {
+                                driver_Id: result,
+                            }
+                        }
+                        const options = {
+                            new: true
+                        }
+                        vehicleModel.findByIdAndUpdate(req.body.vehicle_detail_id, updateData1, options, (error, result) => {
+                            if (error) {
+                                res.send(error)
+                            } else {
+                                // res.send(result)
+                            }
+                        })
+                    }
+                })
+            } catch (err) {
+                res.json(err)
+            }
+        })
+
+    }
+
 }
 
 exports.getSearchOrder = async (req, res) => {
-    const ConditionId = req.body.condition_id;
-    const CarTypeId = req.body.car_type_id;
-    const Ac = req.body.ac;
     const Location_lat = req.body.location_lat;
+    const distanceRadius = req.body.distance;
     const Location_log = req.body.location_log;
-    // console.log(Location_lat)
-    // DriverModel.aggregate([{
-    //     $geoNear: {
-    //         near: {type: "Point", coordinates: [ Location_lat, Location_log ]},
-    //         distanceField: "location",
-    //         minDistance:0,
-    //         maxDistance:5000,
-    //         spherical: true
-    //     }
-    // }], function(err, resp){
-    //     console.log(resp)
-    // })
-    //     DriverModel.find({
-    //         // vehicle_detail_id:req.body.vehicle_detail_id
-    //         // 'vehicle_detail_id[0].condition_id': ConditionId,
-    //         // 'vehicle_detail_id[0].car_type_id': CarTypeId,
-    //         // 'vehicle_detail_id[0].ac': Ac,
-    //         // $geoNear: {
-    //         //     near: { type: "Point", coordinates: [ Location_lat,  Location_log ] },
-    //         //     distanceField: "location",
-    //         //     minDistance: 0,
-    //         //     maxDistance: 2000,
-    //         //     query: { type: "public" },
-    //         //     // includeLocs: "dist.location",
-    //         //     num: 5,
-    //         //     spherical: true
-    //         //  }
-    //         location: {
-    //             $near:{
-    //             $geometry: {
-    //                 type: "Point",
-    //                 coordinates: [Location_log, Location_lat]
-    //             },
-    //             $minDistance: 1000,
-    //             $maxDistance: 5000,
-    //             spherical: true
-    //         }
-    //        }
-
-
-    // }
-    // , (error, result) => {
-    //     if (error) {
-    //         res.send(error)
-    //     } else {
-    //         res.send(result)
-    //     }
-    // }).sort({ $natural: -1 })
-
-    const users = await DriverModel.aggregate([
+    let ArrayCond = [];
+    ArrayCond = await DriverModel.aggregate([
         {
             $geoNear: {
                 near: {
                     type: 'Point',
-                    coordinates: [Number(Location_log), Number(Location_lat)]
+                    coordinates: [parseFloat(Location_log), parseFloat(Location_lat)]
                 },
-                maxDistance: 5000,
+                maxDistance: parseInt(distanceRadius),
                 distanceField: 'distance',
             },
         },
-       
-        // {
-        //     $match: {
-        //         vehicle_detail_id:req.body.vehicle_detail_id
-        //         // 'vehicle_detail_id[0].condition_id': ConditionId,
-        //         // 'vehicle_detail_id[0].car_type_id': CarTypeId,
-        //         // 'vehicle_detail_id[0].ac': Ac,
-        //     }
-        // },
+        {
+            $match: {
+                vehicle_condition_id: mongoose.Types.ObjectId(req.body.condition_id),
+                vehicle_car_type_id: mongoose.Types.ObjectId(req.body.car_type_id),
+                vehicle_ac: req.body.ac
+            }
+        },
+    ])
+    return res.json(ArrayCond)
 
-    ]);
-    return res.json(users)
 
-  
 }
 
 

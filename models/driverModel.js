@@ -35,17 +35,15 @@ const driverSchema = new mongoose.Schema({
     driver_location: String,
     driver_lat: String,
     driver_log: String,
-    // location: {
-    //     type: {
-    //       type: String,
-    //       enum: ['Point'],
-    //       default: 'Point',
-    //     },
-    //     coordinates: {
-    //       type: [Number],
-    //       default: [0, 0]
-    //     }
-    //   }
+    vehicle_condition_id:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'condition'
+    },
+    vehicle_car_type_id:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'car_type'
+    },
+    vehicle_ac:String,
     location: {
         type: {
             type: String,

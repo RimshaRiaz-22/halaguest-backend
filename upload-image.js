@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
-const multer = require('multer')
+const multer = require('multer');
+var fs = require('fs');
 const app = express()
 
 const multerMiddleWareStorage = multer.diskStorage({
@@ -29,8 +30,10 @@ const upload = multer({
 
 const UploadImage = app.post('/', upload.single('image'), (req, res) => {
     try {
+        // fs.unlinkSync('image-uploads\\1667388070942.jpg');
+        // console.log('File deleted!');
         const imageUpload = req.file.path
-        res.json(imageUpload)
+        res.json({ImageLink:imageUpload,message:"Image Uploaded Successfully"})
     } catch (error) {
         res.send(error)
     }
