@@ -44,11 +44,11 @@ exports.loginAdmin = (req, res) => {
 }
 exports.deleteadmin = (req, res) => {
     const adminId = req.params.adminId;
-    adminModel.deleteOne({ _id: adminId }, function (err, foundResult) {
-        try {
-            res.json(foundResult)
-        } catch (err) {
-            res.json(err)
+    adminModel.findByIdAndDelete(adminId, (error, result) => {
+        if (error) {
+            res.send(error)
+        } else {
+            res.json({message:"Deleted Successfully"})
         }
     })
 }
@@ -79,7 +79,7 @@ exports.createadmin = async (req, res) => {
                 })
 
             } else {
-                res.send("Email Already Exist")
+                res.json("Email Already Exist")
 
             }
         }

@@ -69,11 +69,11 @@ exports.getHotelGuests= (req,res)=>{
 }
 exports.deleteHotel= (req,res)=>{
     const HotelId = req.params.HotelId;
-    hotelModel.deleteOne({_id:HotelId},function(err, foundResult){
-        try{
-            res.json(foundResult)
-        }catch(err){
-            res.json(err)
+    hotelModel.findByIdAndDelete(HotelId, (error, result) => {
+        if (error) {
+            res.send(error)
+        } else {
+            res.json({message:"Deleted Successfully"})
         }
     })
 }
