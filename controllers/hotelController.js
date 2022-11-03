@@ -1,6 +1,10 @@
 const hotelModel= require("../models/hotelModel");
+const orderModel= require("../models/orderModel");
+
 const mongoose = require("mongoose");
 const moment = require('moment');
+const guestModel = require("../models/guestModel");
+const invoiceModel = require("../models/invoiceModel");
 exports.getAllHotels= (req,res)=>{
     hotelModel.find({}, (error, result) => {
         if (error) {
@@ -20,6 +24,48 @@ exports.getSpecificHotel= (req,res)=>{
             res.json(err)
         }
     }).populate("payment_detail_id").populate("hotel_type_id")
+}
+exports.getHotelOrdersStatus= (req,res)=>{
+    const HotelId = req.params.hotel_id;
+    const Status = req.params.status;
+
+    orderModel.find({hotel_id:HotelId,status:Status},function(err, foundResult){
+        try{
+            res.json(foundResult)
+        }catch(err){
+            res.json(err)
+        }
+    }).sort({$natural:-1})
+}
+exports.getHotelInvoices= (req,res)=>{
+    const HotelId = req.params.hotel_id;
+    invoiceModel.find({hotel_id:HotelId},function(err, foundResult){
+        try{
+            res.json(foundResult)
+        }catch(err){
+            res.json(err)
+        }
+    }).sort({$natural:-1}).populate("order_id")
+}
+exports.getHotelOrders= (req,res)=>{
+    const HotelId = req.params.hotel_id;
+    orderModel.find({hotel_id:HotelId},function(err, foundResult){
+        try{
+            res.json(foundResult)
+        }catch(err){
+            res.json(err)
+        }
+    }).sort({$natural:-1})
+}
+exports.getHotelGuests= (req,res)=>{
+    const HotelId = req.params.hotel_id;
+    guestModel.find({hotel_id:HotelId},function(err, foundResult){
+        try{
+            res.json(foundResult)
+        }catch(err){
+            res.json(err)
+        }
+    }).sort({$natural:-1})
 }
 exports.deleteHotel= (req,res)=>{
     const HotelId = req.params.HotelId;

@@ -2,6 +2,8 @@ const DriverModel = require("../models/driverModel");
 const mongoose = require("mongoose");
 const moment = require('moment');
 const vehicleModel = require("../models/vehicleModel");
+const orderModel = require("../models/orderModel");
+const driver_search_radius = require("../models/driver_search_radius");
 
 exports.getAllDrivers = (req, res) => {
     DriverModel.find({}, (error, result) => {
@@ -240,30 +242,76 @@ exports.updateDriver = async (req, res) => {
 }
 
 exports.getSearchOrder = async (req, res) => {
-    const Location_lat = req.body.location_lat;
-    const distanceRadius = req.body.distance;
-    const Location_log = req.body.location_log;
-    let ArrayCond = [];
-    ArrayCond = await DriverModel.aggregate([
-        {
-            $geoNear: {
-                near: {
-                    type: 'Point',
-                    coordinates: [parseFloat(Location_log), parseFloat(Location_lat)]
-                },
-                maxDistance: parseInt(distanceRadius),
-                distanceField: 'distance',
-            },
-        },
-        {
-            $match: {
-                vehicle_condition_id: mongoose.Types.ObjectId(req.body.condition_id),
-                vehicle_car_type_id: mongoose.Types.ObjectId(req.body.car_type_id),
-                vehicle_ac: req.body.ac
-            }
-        },
-    ])
-    return res.json(ArrayCond)
+    const DriverId = req.params.DriverId
+
+    DriverModel.find({ _id: DriverId }, async function (err, foundResult) {
+        try {
+            // res.json(foundResult[0])
+            const conditionId = foundResult[0].vehicle_condition_id;
+            const vehicle_car_type_id = foundResult[0].vehicle_car_type_id;
+            const vehicle_ac = foundResult[0].vehicle_ac;
+            const driver_lat = foundResult[0].driver_lat;
+            const driver_log = foundResult[0].driver_log;
+            driver_search_radius.find({},async function (err, foundResult) {
+                try {
+                    // res.json(foundResult[0].radius)
+                    const distanceRadius = foundResult[0].radius;
+                    let ArrayCond = [];
+                    ArrayCond = await orderModel.aggregate([
+                        {
+                            $geoNear: {
+                                near: {
+                                    type: 'Point',
+                                    coordinates: [parseFloat(driver_log), parseFloat(driver_lat)]
+                                },
+                                maxDistance: parseInt(distanceRadius),
+                                distanceField: 'distance',
+                            }
+                        },
+                        {
+                            $match: {
+                                condition_id: mongoose.Types.ObjectId(conditionId),
+                                car_type_id: mongoose.Types.ObjectId(vehicle_car_type_id),
+                                ac: vehicle_ac,
+                                status:'schedule'
+                            }
+                        },
+                    ])
+                    return res.json(ArrayCond)
+                } catch (err) {
+                    res.json(err)
+                }
+            })
+
+
+        } catch (err) {
+            res.json(err)
+        }
+    })
+    // const Location_lat = req.body.location_lat;
+    // const distanceRadius = req.body.distance;
+    // const Location_log = req.body.location_log;
+    // let ArrayCond = [];
+    // ArrayCond = await orderModel.aggregate([
+    //     {
+    //         $geoNear: {
+    //             near: {
+    //                 type: 'Point',
+    //                 coordinates: [parseFloat(Location_log), parseFloat(Location_lat)]
+    //             },
+    //             maxDistance: parseInt(distanceRadius),
+    //             distanceField: 'distance',
+    //         }
+    //     },
+    //     {
+    //         $match: {
+    //             condition_id: mongoose.Types.ObjectId(req.body.condition_id),
+    //             car_type_id: mongoose.Types.ObjectId(req.body.car_type_id),
+    //             ac: req.body.ac
+    //         }
+    //     },
+    // ])
+    // return res.json(ArrayCond)
 
 
 }

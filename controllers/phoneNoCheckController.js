@@ -95,7 +95,7 @@ exports.logins = async (req, res) => {
                     res.send({ data: result, message: 'Guest Doesnot Exists' })
                 } else {
                     const idData = result[0]._id
-                    // console.log(result[0]._id)
+                    // console.log(result[0])
                     const updateData = {
                         device_token: req.body.device_token
                     }
@@ -108,7 +108,20 @@ exports.logins = async (req, res) => {
                         } else {
                             res.send( {data: result, message: 'Guest Exists'})
                         }
-                    }).populate('hotel_type_id').populate('payment_detail_id')
+                    }).populate({ 
+                        path: 'hotel_id',
+                        populate: {
+                          path: 'hotel_type_id',
+                          model: 'hotel_type',
+                        }
+                     })
+                     .populate({ 
+                        path: 'hotel_id',
+                        populate: {
+                          path: 'payment_detail_id',
+                          model: 'payment_details',
+                        }
+                     })
                 }
             }
         })

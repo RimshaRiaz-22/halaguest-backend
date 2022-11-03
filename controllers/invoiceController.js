@@ -135,40 +135,48 @@ exports.deleteInvoice = (req, res) => {
 }
 exports.createInvoice = async (req, res) => {
     const Createddate = req.body.created_at;
-    const Invoice = new invoiceModel({
-        _id: mongoose.Types.ObjectId(),
-        order_id: req.body.order_id,
-        status: req.body.status,
-        created_at: moment(Createddate).format("DD/MM/YYYY"),
-    });
-    try {
-        const savedInvoice = await Invoice.save();
-        res.json({
-            data: savedInvoice,
-            message: "Invoice Created successfully"
-        })
-        const updateData1 = {
-            $push: {
-                Invoice: savedInvoice,
-            }
+    orderModel.findById(req.body.order_id, (error, result) => {
+        if (error) {
+            res.send(error)
+        } else {
+            // res.send(result)
+            const Invoice = new invoiceModel({
+                _id: mongoose.Types.ObjectId(),
+                order_id: req.body.order_id,
+                hotel_id:result.hotel_id,
+                guest_id:result.guest_id,
+                driver_id:result.driver_id,
+                status: req.body.status,
+                created_at: moment(Createddate).format("DD/MM/YYYY"),
+            })
+            Invoice.save((error, result) => {
+                if (error) {
+                    res.send(error)
+                } else {
+                    res.send(result)
+                    const updateData1 = {
+                        $push: {
+                            Invoice: result,
+                        }
+                    }
+                    const options1 = {
+                        new: true
+                    }
+                    orderModel.findByIdAndUpdate(req.body.order_id, updateData1, options1, (error, result) => {
+                        if (error) {
+                            res.send(error)
+                        } else {
+                        }
+                    })
+                }
+            })
         }
-        const options1 = {
-            new: true
-        }
-        orderModel.findByIdAndUpdate(req.body.order_id, updateData1, options1, (error, result) => {
-            if (error) {
-                res.send(error)
-            } else {
-            }
-        })
-    } catch (err) {
-        res.status(400).send(err);
-    }
+    })
+  
 }
 exports.updateInvoice = async (req, res) => {
     const Createddate = req.body.created_at;
     const updateData = {
-        order_id: req.body.order_id,
         status: req.body.status,
         created_at: moment(Createddate).format("DD/MM/YYYY"),
     }

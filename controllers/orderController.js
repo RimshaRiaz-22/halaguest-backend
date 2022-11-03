@@ -257,9 +257,14 @@ exports.createOrder = async (req, res) => {
   const Order = new orderModel({
     _id: mongoose.Types.ObjectId(),
     guest_id: req.body.guest_id,
+    hotel_id:req.body.hotel_id,
     pickup_location: req.body.pickup_location,
     pickup_log: req.body.pickup_log,
     pickup_lat: req.body.pickup_lat,
+    location: {
+      type: 'Point',
+      coordinates: [req.body.pickup_log, req.body.pickup_lat]
+  },
     dropoff_location: req.body.dropoff_location,
     dropoff_log: req.body.dropoff_log,
     dropoff_lat: req.body.dropoff_lat,
@@ -325,7 +330,8 @@ exports.updateOrder = async (req, res) => {
 }
 exports.AcceptOrder = async (req, res) => {
   const updateData = {
-    driver_id: req.body.driver_id
+    driver_id: req.body.driver_id,
+    status:req.body.status
   }
   const options = {
     new: true
@@ -336,20 +342,7 @@ exports.AcceptOrder = async (req, res) => {
     } else {
       res.send(result)
 
-      //   const user = new usersModel({
-      //     _id: mongoose.Types.ObjectId(),
-      //     name:result.guest_id.name,
-      //     image:result.guest_id.image,
-      // });
-      // try {
-      //     const saveduser = user.save();
-      //     res.json({
-      //         data:saveduser,
-      //         message:"User Created successfully"
-      //     })
-      // } catch (err) {
-      //     res.status(400).send(err);
-      // }
+     
       const user = new UsersModel({
         _id: mongoose.Types.ObjectId(),
         name: result.guest_id.name,
