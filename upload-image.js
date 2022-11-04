@@ -33,7 +33,11 @@ const UploadImage = app.post('/', upload.single('image'), (req, res) => {
         // fs.unlinkSync('image-uploads\\1667388070942.jpg');
         // console.log('File deleted!');
         const imageUpload = req.file.path
-        res.json({ImageLink:imageUpload,message:"Image Uploaded Successfully"})
+        if(req.file.path===null){
+            res.json({message:"imageUpload"})
+        }else{
+            res.json(imageUpload)
+        }
     } catch (error) {
         res.send(error)
     }

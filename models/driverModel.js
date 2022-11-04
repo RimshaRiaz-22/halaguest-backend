@@ -25,6 +25,10 @@ const driverSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'driver_documents'
     }],
+    payment_detail_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'payment_details'
+    },
     phoneno: String,
     created_at: String,
     status: {
