@@ -158,8 +158,8 @@ exports.getTotalRatingDriver = (req, res) => {
             newArr.forEach(element => {
                 total = parseInt(total) + parseInt(element.value)
             });
-            console.log(total)
-            console.log(totalCount)
+            // console.log(total)
+            // console.log(totalCount)
             let Rating = ((total/5)/totalCount)*5;
             // console.log()
             let RatingFinal=Rating.toFixed(0);
