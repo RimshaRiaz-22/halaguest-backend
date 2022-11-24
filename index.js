@@ -2,7 +2,7 @@ const express = require("express")
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser")
 const app= express();
-const PORT = 4000;
+const PORT = 5000;
 const cors = require('cors');
 const socket = require("socket.io");
 app.use(bodyParser.urlencoded({ extended: true }))
