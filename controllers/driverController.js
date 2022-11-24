@@ -275,7 +275,7 @@ exports.getSearchOrder = async (req, res) => {
                                 condition_id: mongoose.Types.ObjectId(conditionId),
                                 car_type_id: mongoose.Types.ObjectId(vehicle_car_type_id),
                                 ac: vehicle_ac,
-                                status:'schedule'
+                                status:'created'
                             }
                         },
                     ])

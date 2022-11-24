@@ -15,3 +15,19 @@ exports.createSMS = async (req, res) => {
             })
         )
 }
+
+exports.createOTP= async (req, res) => {
+var otpGenerator = require('otp-generator');
+const otp = otpGenerator.generate(6, { alphabets: false, upperCase: false, specialChars: false });
+    const toContact = req.body.toContact
+    // const msgContent = req.body.msgContent
+    client.messages
+        .create({ body: `Verirification Otp :${otp}`, from: phoneNo, to: toContact })
+        .then(message =>
+            res.json({
+                data: message.sid,
+                otp:otp,
+                message: "Message Send successfully"
+            })
+        )
+}

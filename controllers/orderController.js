@@ -610,10 +610,12 @@ exports.deleteOrder = (req, res) => {
   })
 }
 exports.createOrder = async (req, res) => {
-
+  let orderNo = Math.floor((Math.random() * 100000) + 1);
+  console.log(orderNo)
   const Createddate = req.body.flight_date;
   const Order = new orderModel({
     _id: mongoose.Types.ObjectId(),
+    orderNo: orderNo,
     guest_id: req.body.guest_id,
     hotel_id: req.body.hotel_id,
     pickup_location: req.body.pickup_location,

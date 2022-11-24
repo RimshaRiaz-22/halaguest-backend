@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const orderSchema = new mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
+    orderNo:String,
     guest_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'guest'
@@ -43,7 +44,7 @@ const orderSchema = new mongoose.Schema({
     total_amount: String,
     status: {
         type: String,
-        enum: ['schedule', 'ongoing', 'completed', 'cancel']
+        enum: ['schedule','created', 'ongoing', 'completed', 'cancel']
     },
     cancellation_reason: String,
     canceled_by: String,
