@@ -653,49 +653,112 @@ exports.createOrder = async (req, res) => {
   }
 }
 exports.updateOrder = async (req, res) => {
-  const Createddate = req.body.flight_date;
-  driverModel.find({ _id: req.body.driver_id }, function (err, foundResult) {
-    try {
-      // res.json(foundResult[0].dispacher_id[0])
-      const updateData = {
-        guest_id: req.body.guest_id,
-        pickup_location: req.body.pickup_location,
-        pickup_log: req.body.pickup_log,
-        pickup_lat: req.body.pickup_lat,
-        dropoff_location: req.body.dropoff_location,
-        dropoff_log: req.body.dropoff_log,
-        dropoff_lat: req.body.dropoff_lat,
-        condition_id: req.body.condition_id,
-        car_type_id: req.body.car_type_id,
-        ac: req.body.ac,
-        flight_date: moment(Createddate).format("DD/MM/YYYY"),
-        flight_time: req.body.flight_time,
-        driver_notes: req.body.driver_notes,
-        estimated_amount: req.body.estimated_amount,
-        total_amount: req.body.total_amount,
-        status: req.body.status,
-        cancellation_reason: req.body.cancellation_reason,
-        canceled_by: req.body.canceled_by,
-        canceled_by_id: req.body.canceled_by_id,
-        driver_id: req.body.driver_id,
-        dispacher_id: foundResult[0].dispacher_id[0],
-      }
-      const options = {
-        new: true
-      }
-      orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
-        if (error) {
-          res.send(error)
-        } else {
-          res.send(result)
+  if(req.body.flight_date===undefined){
+    driverModel.find({ _id: req.body.driver_id }, function (err, foundResult) {
+      try {
+        // res.json(foundResult[0].dispacher_id[0])
+        const updateData = {
+          guest_id: req.body.guest_id,
+          pickup_location: req.body.pickup_location,
+          pickup_log: req.body.pickup_log,
+          pickup_lat: req.body.pickup_lat,
+          dropoff_location: req.body.dropoff_location,
+          dropoff_log: req.body.dropoff_log,
+          dropoff_lat: req.body.dropoff_lat,
+          condition_id: req.body.condition_id,
+          car_type_id: req.body.car_type_id,
+          ac: req.body.ac,
+          driver_notes: req.body.driver_notes,
+          estimated_amount: req.body.estimated_amount,
+          total_amount: req.body.total_amount,
+          status: req.body.status,
+          cancellation_reason: req.body.cancellation_reason,
+          canceled_by: req.body.canceled_by,
+          canceled_by_id: req.body.canceled_by_id,
+          driver_id: req.body.driver_id,
+          dispacher_id: foundResult[0].dispacher_id[0],
         }
-      })
-    } catch (err) {
-      res.json(err)
-    }
-  })
+        const options = {
+          new: true
+        }
+        orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+          if (error) {
+            res.send(error)
+          } else {
+            res.send(result)
+          }
+        })
+      } catch (err) {
+        res.json(err)
+      }
+    })
+  }else{
+    const Createddate = req.body.flight_date;
+    driverModel.find({ _id: req.body.driver_id }, function (err, foundResult) {
+      try {
+        // res.json(foundResult[0].dispacher_id[0])
+        const updateData = {
+          guest_id: req.body.guest_id,
+          pickup_location: req.body.pickup_location,
+          pickup_log: req.body.pickup_log,
+          pickup_lat: req.body.pickup_lat,
+          dropoff_location: req.body.dropoff_location,
+          dropoff_log: req.body.dropoff_log,
+          dropoff_lat: req.body.dropoff_lat,
+          condition_id: req.body.condition_id,
+          car_type_id: req.body.car_type_id,
+          ac: req.body.ac,
+          flight_date: moment(Createddate).format("DD/MM/YYYY"),
+          flight_time: req.body.flight_time,
+          driver_notes: req.body.driver_notes,
+          estimated_amount: req.body.estimated_amount,
+          total_amount: req.body.total_amount,
+          status: req.body.status,
+          cancellation_reason: req.body.cancellation_reason,
+          canceled_by: req.body.canceled_by,
+          canceled_by_id: req.body.canceled_by_id,
+          driver_id: req.body.driver_id,
+          dispacher_id: foundResult[0].dispacher_id[0],
+        }
+        const options = {
+          new: true
+        }
+        orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+          if (error) {
+            res.send(error)
+          } else {
+            res.send(result)
+          }
+        })
+      } catch (err) {
+        res.json(err)
+      }
+    })
+  }
+
 
 }
+
+exports.updateOrderStatus = async (req, res) => {
+        const updateData = {
+          status: req.body.status,
+        
+        }
+        const options = {
+          new: true
+        }
+        orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+          if (error) {
+            res.send(error)
+          } else {
+            res.send(result)
+          }
+     
+    })
+  
+  }
+
+
 exports.AcceptOrder = async (req, res) => {
   driverModel.find({ _id: req.body.driver_id }, function (err, foundResult) {
     try {
