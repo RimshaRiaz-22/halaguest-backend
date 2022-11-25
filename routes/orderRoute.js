@@ -6,6 +6,8 @@ router.get("/allOrders" , controller.getAllOrders);
 router.get("/specificOrder/:OrderId" , controller.getSpecificOrder);
 router.delete("/deleteOrder/:OrderId" , controller.deleteOrder);
 router.put("/updateOrder" , controller.updateOrder);
+router.put("/updateOrderStatus" , controller.updateOrderStatus);
+
 router.get("/driverOrders/:driverId" , controller.getDriverOrders);
 router.get("/hotelOrders/:hotelId" , controller.getHotelOrders);
 router.get("/dispacherOrders/:dispacherId" , controller.getDispacherOrders);
