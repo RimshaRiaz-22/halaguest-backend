@@ -16,6 +16,8 @@ router.get("/dispacherOrdersCompleted/:dispacherId" , controller.getDispacherOrd
 
 router.get("/getDriverOrdersAll/:driverId" , controller.getDriverOrdersAll);
 router.get("/getGuestOrdersAll/:guest_id" , controller.getGuestOrdersAll);
+router.get("/getGuestOrdersByStatus" , controller.getGuestOrdersByStatus);
+
 router.get("/getOrdersScheduled/:status" , controller.getOrdersScheduled);
 
 router.get("/hotelOrdersScheduled/:hotelId" , controller.getHotelOrdersScheduled);
