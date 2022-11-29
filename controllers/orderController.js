@@ -482,7 +482,9 @@ exports.getGuestOrdersAll = (req, res) => {
 
 exports.getGuestOrdersByStatus = (req, res) => {
   const GuestId = req.body.guest_id;
-  orderModel.find({ guest_id: GuestId, status: req.body.status }, function (err, foundResult) {
+  const Status = req.body.status;
+
+  orderModel.find({ guest_id: GuestId, status: Status }, function (err, foundResult) {
     try {
       res.json(foundResult)
     } catch (err) {
