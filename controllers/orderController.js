@@ -522,6 +522,131 @@ exports.getGuestOrdersByStatus = (req, res) => {
       }
     })
 }
+exports.getDispacherOrdersByStatus = (req, res) => {
+  const DispacherId = req.body.dispacherId;
+  const Status = req.body.status;
+  orderModel.find({ dispacher_id: DispacherId, status: Status }, function (err, foundResult) {
+    try {
+      res.json(foundResult)
+    } catch (err) {
+      res.json(err)
+    }
+  })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
+exports.getDriverOrdersByStatus = (req, res) => {
+  const DriverId = req.body.driver_id;
+  const Status = req.body.status;
+
+  orderModel.find({ driver_id: DriverId, status: Status }, function (err, foundResult) {
+    try {
+      res.json(foundResult)
+    } catch (err) {
+      res.json(err)
+    }
+  })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
+exports.getHotelOrdersByStatus = (req, res) => {
+  const HotelId = req.body.hotel_id;
+  const Status = req.body.status;
+
+  orderModel.find({ hotel_id: HotelId, status: Status }, function (err, foundResult) {
+    try {
+      res.json(foundResult)
+    } catch (err) {
+      res.json(err)
+    }
+  })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
 exports.getDriverOrdersCompleted = (req, res) => {
   const DriverId = req.params.driverId;
   orderModel.find({ driver_id: DriverId, status: 'completed' }, function (err, foundResult) {
