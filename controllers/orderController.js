@@ -479,6 +479,174 @@ exports.getGuestOrdersAll = (req, res) => {
       }
     })
 }
+
+exports.getGuestOrdersByStatus = (req, res) => {
+  const GuestId = req.body.guest_id;
+  const Status = req.body.status;
+
+  orderModel.find({ guest_id: GuestId, status: Status }, function (err, foundResult) {
+    try {
+      res.json(foundResult)
+    } catch (err) {
+      res.json(err)
+    }
+  })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
+exports.getDispacherOrdersByStatus = (req, res) => {
+  const DispacherId = req.body.dispacherId;
+  const Status = req.body.status;
+  orderModel.find({ dispacher_id: DispacherId, status: Status }, function (err, foundResult) {
+    try {
+      res.json(foundResult)
+    } catch (err) {
+      res.json(err)
+    }
+  })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
+exports.getDriverOrdersByStatus = (req, res) => {
+  const DriverId = req.body.driver_id;
+  const Status = req.body.status;
+
+  orderModel.find({ driver_id: DriverId, status: Status }, function (err, foundResult) {
+    try {
+      res.json(foundResult)
+    } catch (err) {
+      res.json(err)
+    }
+  })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
+exports.getHotelOrdersByStatus = (req, res) => {
+  const HotelId = req.body.hotel_id;
+  const Status = req.body.status;
+
+  orderModel.find({ hotel_id: HotelId, status: Status }, function (err, foundResult) {
+    try {
+      res.json(foundResult)
+    } catch (err) {
+      res.json(err)
+    }
+  })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
 exports.getDriverOrdersCompleted = (req, res) => {
   const DriverId = req.params.driverId;
   orderModel.find({ driver_id: DriverId, status: 'completed' }, function (err, foundResult) {
@@ -653,49 +821,112 @@ exports.createOrder = async (req, res) => {
   }
 }
 exports.updateOrder = async (req, res) => {
-  const Createddate = req.body.flight_date;
-  driverModel.find({ _id: req.body.driver_id }, function (err, foundResult) {
-    try {
-      // res.json(foundResult[0].dispacher_id[0])
-      const updateData = {
-        guest_id: req.body.guest_id,
-        pickup_location: req.body.pickup_location,
-        pickup_log: req.body.pickup_log,
-        pickup_lat: req.body.pickup_lat,
-        dropoff_location: req.body.dropoff_location,
-        dropoff_log: req.body.dropoff_log,
-        dropoff_lat: req.body.dropoff_lat,
-        condition_id: req.body.condition_id,
-        car_type_id: req.body.car_type_id,
-        ac: req.body.ac,
-        flight_date: moment(Createddate).format("DD/MM/YYYY"),
-        flight_time: req.body.flight_time,
-        driver_notes: req.body.driver_notes,
-        estimated_amount: req.body.estimated_amount,
-        total_amount: req.body.total_amount,
-        status: req.body.status,
-        cancellation_reason: req.body.cancellation_reason,
-        canceled_by: req.body.canceled_by,
-        canceled_by_id: req.body.canceled_by_id,
-        driver_id: req.body.driver_id,
-        dispacher_id: foundResult[0].dispacher_id[0],
-      }
-      const options = {
-        new: true
-      }
-      orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
-        if (error) {
-          res.send(error)
-        } else {
-          res.send(result)
+  if(req.body.flight_date===undefined){
+    driverModel.find({ _id: req.body.driver_id }, function (err, foundResult) {
+      try {
+        // res.json(foundResult[0].dispacher_id[0])
+        const updateData = {
+          guest_id: req.body.guest_id,
+          pickup_location: req.body.pickup_location,
+          pickup_log: req.body.pickup_log,
+          pickup_lat: req.body.pickup_lat,
+          dropoff_location: req.body.dropoff_location,
+          dropoff_log: req.body.dropoff_log,
+          dropoff_lat: req.body.dropoff_lat,
+          condition_id: req.body.condition_id,
+          car_type_id: req.body.car_type_id,
+          ac: req.body.ac,
+          driver_notes: req.body.driver_notes,
+          estimated_amount: req.body.estimated_amount,
+          total_amount: req.body.total_amount,
+          status: req.body.status,
+          cancellation_reason: req.body.cancellation_reason,
+          canceled_by: req.body.canceled_by,
+          canceled_by_id: req.body.canceled_by_id,
+          driver_id: req.body.driver_id,
+          dispacher_id: foundResult[0].dispacher_id[0],
         }
-      })
-    } catch (err) {
-      res.json(err)
-    }
-  })
+        const options = {
+          new: true
+        }
+        orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+          if (error) {
+            res.send(error)
+          } else {
+            res.send(result)
+          }
+        })
+      } catch (err) {
+        res.json(err)
+      }
+    })
+  }else{
+    const Createddate = req.body.flight_date;
+    driverModel.find({ _id: req.body.driver_id }, function (err, foundResult) {
+      try {
+        // res.json(foundResult[0].dispacher_id[0])
+        const updateData = {
+          guest_id: req.body.guest_id,
+          pickup_location: req.body.pickup_location,
+          pickup_log: req.body.pickup_log,
+          pickup_lat: req.body.pickup_lat,
+          dropoff_location: req.body.dropoff_location,
+          dropoff_log: req.body.dropoff_log,
+          dropoff_lat: req.body.dropoff_lat,
+          condition_id: req.body.condition_id,
+          car_type_id: req.body.car_type_id,
+          ac: req.body.ac,
+          flight_date: moment(Createddate).format("DD/MM/YYYY"),
+          flight_time: req.body.flight_time,
+          driver_notes: req.body.driver_notes,
+          estimated_amount: req.body.estimated_amount,
+          total_amount: req.body.total_amount,
+          status: req.body.status,
+          cancellation_reason: req.body.cancellation_reason,
+          canceled_by: req.body.canceled_by,
+          canceled_by_id: req.body.canceled_by_id,
+          driver_id: req.body.driver_id,
+          dispacher_id: foundResult[0].dispacher_id[0],
+        }
+        const options = {
+          new: true
+        }
+        orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+          if (error) {
+            res.send(error)
+          } else {
+            res.send(result)
+          }
+        })
+      } catch (err) {
+        res.json(err)
+      }
+    })
+  }
+
 
 }
+
+exports.updateOrderStatus = async (req, res) => {
+        const updateData = {
+          status: req.body.status,
+        
+        }
+        const options = {
+          new: true
+        }
+        orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+          if (error) {
+            res.send(error)
+          } else {
+            res.send(result)
+          }
+     
+    })
+  
+  }
+
+
 exports.AcceptOrder = async (req, res) => {
   driverModel.find({ _id: req.body.driver_id }, function (err, foundResult) {
     try {
