@@ -791,7 +791,7 @@ exports.createOrder = async (req, res) => {
     pickup_lat: req.body.pickup_lat,
     location: {
       type: 'Point',
-      coordinates: [req.body.pickup_log, req.body.pickup_lat]
+      coordinates: [parseFloat(req.body.pickup_log), parseFloat(req.body.pickup_lat)]
     },
     dropoff_location: req.body.dropoff_location,
     dropoff_log: req.body.dropoff_log,
