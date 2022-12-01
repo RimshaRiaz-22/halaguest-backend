@@ -37,8 +37,8 @@ const driverSchema = new mongoose.Schema({
     },
     device_token: String,
     driver_location: String,
-    driver_lat: String,
-    driver_log: String,
+    driver_lat: Number,
+    driver_log: Number,
     vehicle_condition_id:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'condition'

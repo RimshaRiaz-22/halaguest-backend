@@ -11,8 +11,8 @@ const orderSchema = new mongoose.Schema({
         ref: 'hotel'
     },
     pickup_location: String,
-    pickup_log: String,
-    pickup_lat: String,
+    pickup_log: Number,
+    pickup_lat: Number,
     location: {
         type: {
             type: String,
@@ -23,8 +23,8 @@ const orderSchema = new mongoose.Schema({
         }
     },
     dropoff_location: String,
-    dropoff_log: String,
-    dropoff_lat: String,
+    dropoff_log: Number,
+    dropoff_lat: Number,
     condition_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'condition'
