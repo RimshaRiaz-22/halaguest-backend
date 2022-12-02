@@ -35,6 +35,7 @@ exports.getAllDrivers = (req, res) => {
             }
         })
         .populate("doc_id")
+        .populate("ratings")
 }
 exports.getDispacherDriver = (req, res) => {
     const DispacherId = req.params.dispacher_id;
@@ -59,6 +60,7 @@ exports.getDispacherDriver = (req, res) => {
             }
         })
         .populate("doc_id")
+        .populate("ratings")
 }
 
 exports.getSpecificDriver = (req, res) => {
@@ -91,6 +93,8 @@ exports.getSpecificDriver = (req, res) => {
             }
         })
         .populate("doc_id")
+        .populate("ratings")
+
 }
 exports.deleteDriver = (req, res) => {
     const DriverId = req.params.DriverId;
@@ -131,7 +135,8 @@ exports.createDriver = async (req, res) => {
         location: {
             type: 'Point',
             coordinates: [req.body.driver_log, req.body.driver_lat]
-        }
+        },
+        totalRatings:0
 
 
     });

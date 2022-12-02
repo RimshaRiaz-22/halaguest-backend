@@ -9,13 +9,21 @@ router.put("/updateOrder" , controller.updateOrder);
 router.put("/updateOrderStatus" , controller.updateOrderStatus);
 
 router.get("/driverOrders/:driverId" , controller.getDriverOrders);
+router.get("/driverOrdersByTime/:driverId" , controller.driverOrdersByTime);
+
 router.get("/hotelOrders/:hotelId" , controller.getHotelOrders);
+router.get("/getHotelOrdersByTime/:hotelId" , controller.getHotelOrdersByTime);
+
 router.get("/dispacherOrders/:dispacherId" , controller.getDispacherOrders);
+router.get("/getDispacherOrdersByTime/:dispacherId" , controller.getDispacherOrdersByTime);
+
 router.get("/dispacherOrdersScheduled/:dispacherId" , controller.getDispacherOrdersScheduled);
 router.get("/dispacherOrdersCompleted/:dispacherId" , controller.getDispacherOrdersCompleted);
 
 router.get("/getDriverOrdersAll/:driverId" , controller.getDriverOrdersAll);
 router.get("/getGuestOrdersAll/:guest_id" , controller.getGuestOrdersAll);
+router.get("/getGuestOrdersByTime/:guest_id" , controller.getGuestOrdersByTime);
+
 router.post("/getGuestOrdersByStatus" , controller.getGuestOrdersByStatus);
 router.post("/getHotelOrdersByStatus" , controller.getHotelOrdersByStatus);
 router.post("/getDispacherOrdersByStatus" , controller.getDispacherOrdersByStatus);

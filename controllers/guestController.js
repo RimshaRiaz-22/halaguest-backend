@@ -21,7 +21,7 @@ exports.getAllGuests= (req,res)=>{
           path: 'payment_detail_id',
           model: 'payment_details',
         }
-     })
+     }).populate("ratings")
     // .populate("hotel_id")
 }
 
@@ -45,7 +45,7 @@ exports.getSpecificGuest= (req,res)=>{
           path: 'payment_detail_id',
           model: 'payment_details',
         }
-     })
+     }).populate("ratings")
 }
 exports.getHotelGuests= (req,res)=>{
     const HotelId = req.params.hotel_id;

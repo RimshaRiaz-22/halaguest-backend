@@ -60,7 +60,8 @@ const driverSchema = new mongoose.Schema({
     ratings: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'rating'
-    }]
+    }],
+    totalRatings:String
     },
     {
         timestamps: true

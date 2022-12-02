@@ -78,8 +78,6 @@ exports.getOrdersScheduled = (req, res) => {
       }
     })
 }
-// Comment 
-
 exports.getSpecificOrder = (req, res) => {
   const OrderId = req.params.OrderId;
   orderModel.find({ _id: OrderId }, function (err, foundResult) {
@@ -159,6 +157,47 @@ exports.getHotelOrders = (req, res) => {
       }
     })
 }
+exports.getHotelOrdersByTime = (req, res) => {
+  const HotelId = req.params.hotelId;
+  orderModel.find({ hotel_id: HotelId }, function (err, foundResult) {
+    try {
+      res.json( foundResult.sort((a, b) => a.flight_date - b.flight_date))
+
+    } catch (err) {
+      res.json(err)
+    }
+  }).sort({ $natural: -1 })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
 exports.getDispacherOrders = (req, res) => {
   const DispacherId = req.params.dispacherId;
   orderModel.find({ dispacher_id: DispacherId }, function (err, foundResult) {
@@ -168,6 +207,48 @@ exports.getDispacherOrders = (req, res) => {
       res.json(err)
     }
   })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
+exports.getDispacherOrdersByTime = (req, res) => {
+  const DispacherId = req.params.dispacherId;
+  orderModel.find({ dispacher_id: DispacherId }, function (err, foundResult) {
+    try {
+      // res.json(foundResult)
+      res.json( foundResult.sort((a, b) => a.flight_date - b.flight_date))
+
+    } catch (err) {
+      res.json(err)
+    }
+  }).sort({ $natural: -1 })
     .populate("condition_id")
     .populate({
       path: 'guest_id',
@@ -399,6 +480,46 @@ exports.getDriverOrders = (req, res) => {
       }
     })
 }
+exports.driverOrdersByTime = (req, res) => {
+  const DriverId = req.params.driverId;
+  orderModel.find({ driver_id: DriverId, status: 'schedule' }, function (err, foundResult) {
+    try {
+      res.json( foundResult.sort((a, b) => a.flight_date - b.flight_date))
+    } catch (err) {
+      res.json(err)
+    }
+  }).sort({ $natural: -1 })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
 exports.getDriverOrdersAll = (req, res) => {
   const DriverId = req.params.driverId;
   orderModel.find({ driver_id: DriverId }, function (err, foundResult) {
@@ -439,15 +560,16 @@ exports.getDriverOrdersAll = (req, res) => {
       }
     })
 }
-exports.getGuestOrdersAll = (req, res) => {
+exports.getGuestOrdersByTime = (req, res) => {
   const GuestId = req.params.guest_id;
   orderModel.find({ guest_id: GuestId }, function (err, foundResult) {
     try {
-      res.json(foundResult)
+      res.json( foundResult.sort((a, b) => a.flight_date - b.flight_date))
+     
     } catch (err) {
       res.json(err)
     }
-  })
+  }).sort({ $natural: -1 })
     .populate("condition_id")
     .populate({
       path: 'guest_id',
@@ -479,7 +601,47 @@ exports.getGuestOrdersAll = (req, res) => {
       }
     })
 }
-
+exports.getGuestOrdersAll = (req, res) => {
+  const GuestId = req.params.guest_id;
+  orderModel.find({ guest_id: GuestId }, function (err, foundResult) {
+    try {
+      // res.json( foundResult.sort((a, b) => a.flight_date - b.flight_date))
+      res.json(foundResult)
+    } catch (err) {
+      res.json(err)
+    }
+  }).sort({ $natural: -1 })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
 exports.getGuestOrdersByStatus = (req, res) => {
   const GuestId = req.body.guest_id;
   const Status = req.body.status;
@@ -906,7 +1068,6 @@ exports.updateOrder = async (req, res) => {
 
 
 }
-
 exports.updateOrderStatus = async (req, res) => {
         const updateData = {
           status: req.body.status,
@@ -925,8 +1086,6 @@ exports.updateOrderStatus = async (req, res) => {
     })
   
   }
-
-
 exports.AcceptOrder = async (req, res) => {
   driverModel.find({ _id: req.body.driver_id }, function (err, foundResult) {
     try {

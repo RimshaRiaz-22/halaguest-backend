@@ -24,6 +24,11 @@ const hotelSchema = new mongoose.Schema({
         type: String,
         enum: ['block', 'unblock']
     },
+    ratings: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ratingGuest'
+    }],
+    totalRatings:String
 }
 );
 module.exports = mongoose.model("hotel", hotelSchema);
