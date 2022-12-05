@@ -17,7 +17,7 @@ exports.createSMS = async (req, res) => {
 }
 
 exports.createOTP= async (req, res) => {
-    if(req.body.toContact==="12345678" ||req.body.toContact==="23456781"||req.body.toContact==="34567812"||req.body.toContact==="45678123"){
+    if(req.body.toContact==="+96812345678" ||req.body.toContact==="+96823456781"||req.body.toContact==="+96834567812"||req.body.toContact==="+96845678123"){
         res.json({
             // data: message.sid,
             otp:"0000",
