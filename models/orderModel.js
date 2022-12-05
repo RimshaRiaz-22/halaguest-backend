@@ -53,6 +53,17 @@ const orderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'driver'
     },
+    driver_Lat:Number,
+    driver_Long:Number,
+    driver_location: {
+        type: {
+            type: String,
+            enum: ['Point']
+        },
+        coordinates: {
+            type: [Number]
+        }
+    },
     dispacher_id:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'dispacher'

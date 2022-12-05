@@ -161,7 +161,7 @@ exports.getHotelOrdersByTime = (req, res) => {
   const HotelId = req.params.hotelId;
   orderModel.find({ hotel_id: HotelId }, function (err, foundResult) {
     try {
-      res.json( foundResult.sort((a, b) => a.flight_date - b.flight_date))
+      res.json(foundResult.sort((a, b) => a.flight_date - b.flight_date))
 
     } catch (err) {
       res.json(err)
@@ -243,7 +243,7 @@ exports.getDispacherOrdersByTime = (req, res) => {
   orderModel.find({ dispacher_id: DispacherId }, function (err, foundResult) {
     try {
       // res.json(foundResult)
-      res.json( foundResult.sort((a, b) => a.flight_date - b.flight_date))
+      res.json(foundResult.sort((a, b) => a.flight_date - b.flight_date))
 
     } catch (err) {
       res.json(err)
@@ -484,7 +484,7 @@ exports.driverOrdersByTime = (req, res) => {
   const DriverId = req.params.driverId;
   orderModel.find({ driver_id: DriverId, status: 'schedule' }, function (err, foundResult) {
     try {
-      res.json( foundResult.sort((a, b) => a.flight_date - b.flight_date))
+      res.json(foundResult.sort((a, b) => a.flight_date - b.flight_date))
     } catch (err) {
       res.json(err)
     }
@@ -564,8 +564,8 @@ exports.getGuestOrdersByTime = (req, res) => {
   const GuestId = req.params.guest_id;
   orderModel.find({ guest_id: GuestId }, function (err, foundResult) {
     try {
-      res.json( foundResult.sort((a, b) => a.flight_date - b.flight_date))
-     
+      res.json(foundResult.sort((a, b) => a.flight_date - b.flight_date))
+
     } catch (err) {
       res.json(err)
     }
@@ -983,7 +983,7 @@ exports.createOrder = async (req, res) => {
   }
 }
 exports.updateOrder = async (req, res) => {
-  if(req.body.flight_date===undefined){
+  if (req.body.flight_date === undefined) {
     driverModel.find({ _id: req.body.driver_id }, function (err, foundResult) {
       try {
         // res.json(foundResult[0].dispacher_id[0])
@@ -1022,7 +1022,7 @@ exports.updateOrder = async (req, res) => {
         res.json(err)
       }
     })
-  }else{
+  } else {
     const Createddate = req.body.flight_date;
     driverModel.find({ _id: req.body.driver_id }, function (err, foundResult) {
       try {
@@ -1069,23 +1069,78 @@ exports.updateOrder = async (req, res) => {
 
 }
 exports.updateOrderStatus = async (req, res) => {
-        const updateData = {
-          status: req.body.status,
-        
-        }
-        const options = {
-          new: true
-        }
-        orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
-          if (error) {
-            res.send(error)
-          } else {
-            res.send(result)
-          }
-     
-    })
-  
+  const updateData = {
+    status: req.body.status,
+
   }
+  const options = {
+    new: true
+  }
+  orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+    if (error) {
+      res.send(error)
+    } else {
+      res.send(result)
+    }
+
+  })
+
+}
+exports.updateOrderStatusOngoing = async (req, res) => {
+  const OrderId = req.body._id;
+  orderModel.find({ _id: OrderId }, function (err, foundResult) {
+    try {
+      // res.json(foundResult[0].driver_id)
+      driverModel.find({ _id: foundResult[0].driver_id }, function (err, foundResult) {
+        try {
+          // res.json(foundResult)
+          const driver_lat = foundResult[0].driver_lat;
+          const driver_lng = foundResult[0].driver_log;
+          const updateData = {
+            status: req.body.status,
+            driver_location: {
+              type: 'Point',
+              coordinates: [parseFloat(driver_lng), parseFloat(driver_lat)]
+            },
+          }
+          const options = {
+            new: true
+          }
+          orderModel.findByIdAndUpdate(OrderId, updateData, options, (error, result) => {
+            if (error) {
+              res.send(error)
+            } else {
+              res.send(result)
+            }
+
+          })
+
+        } catch (err) {
+          res.json(err)
+        }
+      })
+
+    } catch (err) {
+      res.json(err)
+    }
+  })
+  // const updateData = {
+  //   status: req.body.status,
+
+  // }
+  // const options = {
+  //   new: true
+  // }
+  //     orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+  //       if (error) {
+  //         res.send(error)
+  //       } else {
+  //         res.send(result)
+  //       }
+
+  // })
+
+}
 exports.AcceptOrder = async (req, res) => {
   driverModel.find({ _id: req.body.driver_id }, function (err, foundResult) {
     try {
@@ -1132,8 +1187,36 @@ exports.AcceptOrder = async (req, res) => {
             // res.send(result)
           }
         })
-
-      }).populate('guest_id').populate('driver_id')
+        const userDispacher = new UsersModel({
+          _id: mongoose.Types.ObjectId(),
+          name: result.dispacher_id.name_of_company,
+          image: result.dispacher_id.img,
+          order_id: result._id,
+          userId: result.dispacher_id._id
+        })
+        userDispacher.save((error, result) => {
+          if (error) {
+            res.send(error)
+          } else {
+            // res.send(result)
+          }
+        })
+        const userHotel = new UsersModel({
+          _id: mongoose.Types.ObjectId(),
+          name: result.hotel_id.hotel_name,
+          image: result.hotel_id.img,
+          order_id: result._id,
+          userId: result.hotel_id._id
+        })
+        userHotel.save((error, result) => {
+          if (error) {
+            res.send(error)
+          } else {
+            // res.send(result)
+          }
+        })
+        
+      }).populate('guest_id').populate('driver_id').populate('hotel_id').populate('dispacher_id')
 
     } catch (err) {
       res.json(err)

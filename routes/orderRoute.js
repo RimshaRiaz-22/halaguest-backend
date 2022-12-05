@@ -7,6 +7,7 @@ router.get("/specificOrder/:OrderId" , controller.getSpecificOrder);
 router.delete("/deleteOrder/:OrderId" , controller.deleteOrder);
 router.put("/updateOrder" , controller.updateOrder);
 router.put("/updateOrderStatus" , controller.updateOrderStatus);
+router.post("/updateOrderStatusOngoing" , controller.updateOrderStatusOngoing);
 
 router.get("/driverOrders/:driverId" , controller.getDriverOrders);
 router.get("/driverOrdersByTime/:driverId" , controller.driverOrdersByTime);
@@ -28,11 +29,7 @@ router.post("/getGuestOrdersByStatus" , controller.getGuestOrdersByStatus);
 router.post("/getHotelOrdersByStatus" , controller.getHotelOrdersByStatus);
 router.post("/getDispacherOrdersByStatus" , controller.getDispacherOrdersByStatus);
 router.post("/getDriverOrdersByStatus" , controller.getDriverOrdersByStatus);
-
-
-
 router.get("/getOrdersScheduled/:status" , controller.getOrdersScheduled);
-
 router.get("/hotelOrdersScheduled/:hotelId" , controller.getHotelOrdersScheduled);
 router.get("/hotelOrdersCompleted/:hotelId" , controller.getHotelOrdersCompleted);
 router.get("/driverOrdersCompleted/:driverId" , controller.getDriverOrdersCompleted);
