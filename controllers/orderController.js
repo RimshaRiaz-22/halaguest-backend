@@ -1133,6 +1133,8 @@ exports.updateOrderStatusOngoing = async (req, res) => {
           const driver_lng = req.body.driver_log;
           const updateData = {
             status: req.body.status,
+            driver_Lat:driver_lat,
+            driver_Long:driver_lng,
             driver_location: {
               type: 'Point',
               coordinates: [parseFloat(driver_lng), parseFloat(driver_lat)]
