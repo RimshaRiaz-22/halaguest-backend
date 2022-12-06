@@ -1,8 +1,17 @@
 const orderModel = require("../models/orderModel");
 const mongoose = require("mongoose");
 const moment = require('moment');
+const express = require('express')
+const app = express()
+// const socket = require("socket.io");
+const server = require('http').createServer(app)
+const io = require('socket.io')(server)
+// const { addUser, removeUser, getUser,
+//   getUsersInRoom } = require("./users");
 const UsersModel = require("../models/usersModel");
 const driverModel = require("../models/driverModel");
+const { addUser, removeUser, getUser,
+  getUsersInRoom } = require("./user");
 exports.getAllOrders = (req, res) => {
   orderModel.find({}, (error, result) => {
     if (error) {
@@ -978,6 +987,12 @@ exports.createOrder = async (req, res) => {
       data: savedOrder,
       message: "Order Created successfully"
     })
+    // io.on('connection', socket => {
+    //   console.log('Scket chat on ')
+    //   socket.on('chat', message => {
+    //     console.log('From client: ', message)
+    //   })
+    // })
   } catch (err) {
     res.status(400).send(err);
   }
@@ -1069,21 +1084,41 @@ exports.updateOrder = async (req, res) => {
 
 }
 exports.updateOrderStatus = async (req, res) => {
-  const updateData = {
-    status: req.body.status,
+  // socket.disconnect()
+  if (req.body.status === 'completed') {
+    const updateData = {
+      status: req.body.status,
 
-  }
-  const options = {
-    new: true
-  }
-  orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
-    if (error) {
-      res.send(error)
-    } else {
-      res.send(result)
     }
+    const options = {
+      new: true
+    }
+    orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+      if (error) {
+        res.send(error)
+      } else {
+        res.send(result)
+      }
 
-  })
+    })
+  } else {
+    const updateData = {
+      status: req.body.status,
+
+    }
+    const options = {
+      new: true
+    }
+    orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
+      if (error) {
+        res.send(error)
+      } else {
+        res.send(result)
+      }
+
+    })
+  }
+
 
 }
 exports.updateOrderStatusOngoing = async (req, res) => {
@@ -1091,11 +1126,11 @@ exports.updateOrderStatusOngoing = async (req, res) => {
   orderModel.find({ _id: OrderId }, function (err, foundResult) {
     try {
       // res.json(foundResult[0].driver_id)
-      driverModel.find({ _id: foundResult[0].driver_id }, function (err, foundResult) {
-        try {
+      // driverModel.find({ _id: foundResult[0].driver_id }, function (err, foundResult) {
+      //   try {
           // res.json(foundResult)
-          const driver_lat = foundResult[0].driver_lat;
-          const driver_lng = foundResult[0].driver_log;
+          const driver_lat = req.body.driver_lat;
+          const driver_lng = req.body.driver_log;
           const updateData = {
             status: req.body.status,
             driver_location: {
@@ -1111,14 +1146,73 @@ exports.updateOrderStatusOngoing = async (req, res) => {
               res.send(error)
             } else {
               res.send(result)
+                // Chat Room 
+        io.on("connection", (socket) => {
+          socket.on('join', ({ name, room }, callback) => {
+
+            const { error, user } = addUser(
+              { id: socket.id, name, room });
+
+            if (error) return callback(error);
+
+            // Emit will send message to the user
+            // who had joined
+            socket.emit('message', {
+              user: 'admin', text:
+                `${user.name},
+                  welcome to room ${user.room}.`
+            });
+
+            // Broadcast will send message to everyone
+            // in the room except the joined user
+            socket.broadcast.to(user.room)
+              .emit('message', {
+                user: "admin",
+                text: `${user.name}, has joined`
+              });
+
+            socket.join(user.room);
+
+            io.to(user.room).emit('roomData', {
+              room: user.room,
+              users: getUsersInRoom(user.room)
+            });
+            callback();
+          })
+
+          socket.on('sendMessage', (message, callback) => {
+
+            const user = getUser(socket.id);
+            io.to(user.room).emit('message',
+              { user: user.name, text: message });
+
+            io.to(user.room).emit('roomData', {
+              room: user.room,
+              users: getUsersInRoom(user.room)
+            });
+            callback();
+          })
+
+          socket.on('disconnect', () => {
+            const user = removeUser(socket.id);
+            if (user) {
+              io.to(user.room).emit('message',
+                {
+                  user: 'admin', text:
+                    `${user.name} had left`
+                });
+            }
+          })
+
+        })
             }
 
           })
 
-        } catch (err) {
-          res.json(err)
-        }
-      })
+      //   } catch (err) {
+      //     res.json(err)
+      //   }
+      // })
 
     } catch (err) {
       res.json(err)
@@ -1215,7 +1309,13 @@ exports.AcceptOrder = async (req, res) => {
             // res.send(result)
           }
         })
-        
+        // broadcast 
+        // io.on('connection', (socket) => {
+        //   socket.broadcast.emit('hi');
+        // });
+      
+
+
       }).populate('guest_id').populate('driver_id').populate('hotel_id').populate('dispacher_id')
 
     } catch (err) {

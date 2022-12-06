@@ -59,12 +59,18 @@ const io = socket(server, {
     credentials: true,
   },
 });
+// io.on('connection', (socket) => { /* socket object may be used to send specific messages to the new connected client */
+
+//     console.log('new client connected');
+//     socket.emit('connection', null);
+// });
 
 global.onlineUsers = new Map();
 io.on("connection", (socket) => {
   global.chatSocket = socket;
   socket.on("add-user", (userId) => {
     onlineUsers.set(userId, socket.id);
+    console.log('user connected')
   });
 
   socket.on("send-msg", (data) => {
