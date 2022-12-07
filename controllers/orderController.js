@@ -131,6 +131,7 @@ exports.getHotelOrders = (req, res) => {
   orderModel.find({ hotel_id: HotelId }, function (err, foundResult) {
     try {
       res.json(foundResult)
+      
     } catch (err) {
       res.json(err)
     }

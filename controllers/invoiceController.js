@@ -14,9 +14,33 @@ exports.getAllInvoices = (req, res) => {
         .populate('hotel_id')
         .populate('guest_id')
         .populate('driver_id')
+}
+exports.getInvoicesBetweenDates = (req, res) => {
+    // const startDate = req.body.startDate;
+    invoiceModel.find({ created_at : {$gte: req.body.sdate, $lt: req.body.edate}}, function (err, foundResult) {
+        try {
+            res.json(foundResult)
+        } catch (err) {
+            res.json(err)
+        }
+    }).populate('order_id')
+        .populate('hotel_id')
+        .populate('guest_id')
+        .populate('driver_id')
 
-
-
+}
+exports.getInvoicesByStatus = (req, res) => {
+    const status = req.body.status;
+    invoiceModel.find({ status: status }, function (err, foundResult) {
+        try {
+            res.json(foundResult)
+        } catch (err) {
+            res.json(err)
+        }
+    }).populate('order_id')
+        .populate('hotel_id')
+        .populate('guest_id')
+        .populate('driver_id')
 
 }
 exports.getDriverTransactionCompleted = (req, res) => {
@@ -129,7 +153,8 @@ exports.createInvoice = async (req, res) => {
         if (error) {
             res.send(error)
         } else {
-            // res.send(result)
+            const totalAmountData = parseFloat(result.total_amount)
+            console.log(totalAmountData)
             const Invoice = new invoiceModel({
                 _id: mongoose.Types.ObjectId(),
                 order_id: req.body.order_id,
@@ -137,6 +162,7 @@ exports.createInvoice = async (req, res) => {
                 guest_id: result.guest_id,
                 driver_id: result.driver_id,
                 status: req.body.status,
+                totalAmount: totalAmountData,
                 created_at: moment(Createddate).format("DD/MM/YYYY"),
             })
             Invoice.save((error, result) => {
@@ -145,12 +171,13 @@ exports.createInvoice = async (req, res) => {
                 } else {
                     res.send(result)
                     if (result.status === 'pending') {
+                        console.log('pensinf')
                         const updateData1 = {
-                            $push: {
-                                Invoice: result,
+                            // $push: {
+                                // Invoice: result,
                                 invoiceStatus: 'billed'
 
-                            },
+                            // },
                         }
                         const options1 = {
                             new: true
@@ -163,11 +190,11 @@ exports.createInvoice = async (req, res) => {
                         })
                     } else {
                         const updateData1 = {
-                            $push: {
-                                Invoice: result,
+                            // $push: {
+                                // Invoice: result,
                                 invoiceStatus: 'unbilled'
 
-                            },
+                            // },
                         }
                         const options1 = {
                             new: true
@@ -178,6 +205,8 @@ exports.createInvoice = async (req, res) => {
                             } else {
                             }
                         })
+                        console.log('pensinfhj')
+
                     }
 
                 }
@@ -204,7 +233,6 @@ exports.updateInvoice = async (req, res) => {
                 const updateData1 = {
                     $push: {
                         invoiceStatus: 'billed'
-
                     },
                 }
                 const options1 = {
@@ -236,6 +264,3 @@ exports.updateInvoice = async (req, res) => {
         }
     })
 }
-
-
-

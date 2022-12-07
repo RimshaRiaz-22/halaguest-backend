@@ -21,6 +21,7 @@ const invoiceSchema = new mongoose.Schema({
         type: String,
         enum: ['pending', 'completed']
     },
+    totalAmount:String,
     created_at:String
 }
 );

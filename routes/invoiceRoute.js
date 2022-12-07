@@ -12,6 +12,9 @@ router.get("/getGuestsTransactionCompleted/:guest_id" , controller.getGuestsTran
 router.get("/getHotelTransactionCompleted/:hotel_id" , controller.getHotelTransactionCompleted);
 router.get("/getOrderTransactionCompleted/:order_id" , controller.getOrderTransactionCompleted);
 
+router.post("/getInvoicesBetweenDates" , controller.getInvoicesBetweenDates);
+
+router.post("/getInvoicesByStatus" , controller.getInvoicesByStatus);
 
 module.exports = router;
 
