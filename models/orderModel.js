@@ -71,7 +71,11 @@ const orderSchema = new mongoose.Schema({
     Invoice: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'invoice'
-    }]
+    }],
+    invoiceStatus: {
+        type: String,
+        enum: ['billed', 'unbilled']
+    }
 },
     {
         timestamps: true

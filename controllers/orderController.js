@@ -166,6 +166,48 @@ exports.getHotelOrders = (req, res) => {
       }
     })
 }
+// get-billed/unbilled invoice orders
+
+exports.getOrdersByInvoiceStatus = (req, res) => {
+  const invoiceStatus = req.body.invoiceStatus;
+  orderModel.find({ invoiceStatus: invoiceStatus }, function (err, foundResult) {
+    try {
+      res.json(foundResult)
+    } catch (err) {
+      res.json(err)
+    }
+  })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
 exports.getHotelOrdersByTime = (req, res) => {
   const HotelId = req.params.hotelId;
   orderModel.find({ hotel_id: HotelId }, function (err, foundResult) {
@@ -979,7 +1021,9 @@ exports.createOrder = async (req, res) => {
     cancellation_reason: req.body.cancellation_reason,
     canceled_by: req.body.canceled_by,
     canceled_by_id: req.body.canceled_by_id,
-    driver_id: req.body.driver_id
+    driver_id: req.body.driver_id,
+    invoiceStatus:'unbilled',
+
   });
   try {
     const savedOrder = await Order.save();
@@ -1088,7 +1132,7 @@ exports.updateOrderStatus = async (req, res) => {
   if (req.body.status === 'completed') {
     const updateData = {
       status: req.body.status,
-
+      invoiceStatus:req.body.invoiceStatus
     }
     const options = {
       new: true
@@ -1104,6 +1148,8 @@ exports.updateOrderStatus = async (req, res) => {
   } else {
     const updateData = {
       status: req.body.status,
+      invoiceStatus:req.body.invoiceStatus
+
 
     }
     const options = {

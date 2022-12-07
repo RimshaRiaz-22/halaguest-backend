@@ -46,6 +46,10 @@ app.use("/api/Order" , require("./routes/orderRoute"));
 app.use("/api/invoice" , require("./routes/invoiceRoute"));
 app.use("/api/Rating" , require("./routes/ratingRoute"));
 app.use("/api/RatingGuest" , require("./routes/ratingGuestRoute"));
+app.use("/api/privacyPolicy" , require("./routes/privacyPolicyRoute"));
+app.use("/api/termsAndConditions" , require("./routes/termsAndConditionsRoute"));
+
+
 
 app.use('/upload-image', require('./upload-image'))
 app.use('/delete-image', require('./delete-image'))

@@ -36,6 +36,8 @@ router.get("/driverOrdersCompleted/:driverId" , controller.getDriverOrdersComple
 router.get("/driverOrdersOngoing/:driverId" , controller.getDriverOrdersOngoing);
 router.get("/driverOrdersCancel/:driverId" , controller.getDriverOrdersCancel);
 router.put("/AcceptOrder" , controller.AcceptOrder);
+// invoice 
+router.post("/getOrdersByInvoiceStatus" , controller.getOrdersByInvoiceStatus);
 
 module.exports = router;
 

@@ -5,6 +5,7 @@ router.post("/createInvoice" , controller.createInvoice);
 router.get("/allInvoices" , controller.getAllInvoices);
 router.get("/specificInvoice/:InvoiceId" , controller.getSpecificInvoice);
 router.delete("/deleteInvoice/:InvoiceId" , controller.deleteInvoice);
+
 router.put("/updateInvoice" , controller.updateInvoice);
 router.get("/getDriverTransactionCompleted/:driver_id" , controller.getDriverTransactionCompleted);
 router.get("/getGuestsTransactionCompleted/:guest_id" , controller.getGuestsTransactionCompleted);
