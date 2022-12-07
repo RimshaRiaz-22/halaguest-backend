@@ -53,6 +53,7 @@ exports.createNotificationDetail = async (req, res) => {
         _id: mongoose.Types.ObjectId(),
         to: req.body.to,
         to_table:req.body.to_table,
+        type:req.body.type,
         from: req.body.from,
         from_table:req.body.from_table,
         detail: req.body.detail,

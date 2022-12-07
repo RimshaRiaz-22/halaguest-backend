@@ -12,6 +12,7 @@ const notificationSchema = new mongoose.Schema({
         enum: ['admin', 'hotel','dispacher','driver','guest']
     },
     detail: String,
+    type:String,
     created_at: String,
     readStatus: Boolean,
 }
