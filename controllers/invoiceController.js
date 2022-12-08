@@ -14,6 +14,7 @@ exports.getAllInvoices = (req, res) => {
         .populate('hotel_id')
         .populate('guest_id')
         .populate('driver_id')
+        .populate('dispacher_id')
 }
 exports.getInvoicesBetweenDates = (req, res) => {
     // const startDate = req.body.startDate;
@@ -27,6 +28,8 @@ exports.getInvoicesBetweenDates = (req, res) => {
         .populate('hotel_id')
         .populate('guest_id')
         .populate('driver_id')
+        .populate('dispacher_id')
+
 
 }
 exports.getInvoicesByStatus = (req, res) => {
@@ -55,6 +58,8 @@ exports.getDriverTransactionCompleted = (req, res) => {
         .populate('hotel_id')
         .populate('guest_id')
         .populate('driver_id')
+        .populate('dispacher_id')
+
 
 }
 exports.getHotelTransactionCompleted = (req, res) => {
@@ -69,6 +74,8 @@ exports.getHotelTransactionCompleted = (req, res) => {
         .populate('hotel_id')
         .populate('guest_id')
         .populate('driver_id')
+        .populate('dispacher_id')
+
 
 }
 exports.getGuestsTransactionCompleted = (req, res) => {
@@ -83,6 +90,8 @@ exports.getGuestsTransactionCompleted = (req, res) => {
         .populate('hotel_id')
         .populate('guest_id')
         .populate('driver_id')
+        .populate('dispacher_id')
+
 
 }
 exports.getOrderTransactionCompleted = (req, res) => {
@@ -97,6 +106,8 @@ exports.getOrderTransactionCompleted = (req, res) => {
         .populate('hotel_id')
         .populate('guest_id')
         .populate('driver_id')
+        .populate('dispacher_id')
+
 
 }
 
@@ -114,6 +125,8 @@ exports.getSpecificInvoice = (req, res) => {
         .populate('hotel_id')
         .populate('guest_id')
         .populate('driver_id')
+        .populate('dispacher_id')
+
 }
 exports.deleteInvoice = (req, res) => {
     const InvoiceId = req.params.InvoiceId;
@@ -161,6 +174,7 @@ exports.createInvoice = async (req, res) => {
                 hotel_id: result.hotel_id,
                 guest_id: result.guest_id,
                 driver_id: result.driver_id,
+                dispacher_id:result.dispacher_id,
                 status: req.body.status,
                 totalAmount: totalAmountData,
                 created_at: moment(Createddate).format("DD/MM/YYYY"),
@@ -175,7 +189,7 @@ exports.createInvoice = async (req, res) => {
                         const updateData1 = {
                             // $push: {
                                 // Invoice: result,
-                                invoiceStatus: 'billed'
+                                invoiceStatus: 'unbilled'
 
                             // },
                         }
@@ -192,7 +206,7 @@ exports.createInvoice = async (req, res) => {
                         const updateData1 = {
                             // $push: {
                                 // Invoice: result,
-                                invoiceStatus: 'unbilled'
+                                invoiceStatus: 'billed'
 
                             // },
                         }
@@ -232,7 +246,7 @@ exports.updateInvoice = async (req, res) => {
             if (result.status === 'pending') {
                 const updateData1 = {
                     $push: {
-                        invoiceStatus: 'billed'
+                        invoiceStatus: 'unbilled'
                     },
                 }
                 const options1 = {
@@ -247,7 +261,7 @@ exports.updateInvoice = async (req, res) => {
             } else {
                 const updateData1 = {
                     $push: {
-                        invoiceStatus: 'unbilled'
+                        invoiceStatus: 'billed'
 
                     },
                 }

@@ -17,6 +17,10 @@ const invoiceSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'driver'
     },
+    dispacher_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'dispacher'
+    },
     status: {
         type: String,
         enum: ['pending', 'completed']

@@ -1,4 +1,6 @@
 const orderModel = require("../models/orderModel");
+const invoiceModel = require("../models/invoiceModel");
+
 const mongoose = require("mongoose");
 const moment = require('moment');
 const express = require('express')
@@ -1131,21 +1133,50 @@ exports.updateOrder = async (req, res) => {
 exports.updateOrderStatus = async (req, res) => {
   // socket.disconnect()
   if (req.body.status === 'completed') {
-    const updateData = {
-      status: req.body.status,
-      invoiceStatus:req.body.invoiceStatus
-    }
-    const options = {
-      new: true
-    }
-    orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
-      if (error) {
-        res.send(error)
-      } else {
-        res.send(result)
-      }
+    const Createddate = req.body.created_at;
+    orderModel.findById(req.body._id, (error, result) => {
+        if (error) {
+            res.send(error)
+        } else {
+          // res.send(result)
+            const totalAmountData = parseFloat(result.total_amount)
+            console.log(totalAmountData)
+            const Invoice = new invoiceModel({
+                _id: mongoose.Types.ObjectId(),
+                order_id: req.body.order_id,
+                hotel_id: result.hotel_id,
+                guest_id: result.guest_id,
+                driver_id: result.driver_id,
+                dispacher_id:result.dispacher_id,
+                status:'pending',
+                totalAmount: totalAmountData,
+                created_at: moment(Createddate).format("DD/MM/YYYY"),
+            })
+            Invoice.save((error, result) => {
+                if (error) {
+                    res.send(error)
+                } else {
+                    res.send(result)
+                        console.log('pensinf')
+                        const updateData1 = {
+                                status:'completed',
+                                invoiceStatus: 'unbilled'
+                        }
+                        const options1 = {
+                            new: true
+                        }
+                        orderModel.findByIdAndUpdate(req.body.order_id, updateData1, options1, (error, result) => {
+                            if (error) {
+                                res.send(error)
+                            } else {
+                            }
+                        })
 
+                }
+            })
+        }
     })
+    
   } else {
     const updateData = {
       status: req.body.status,
