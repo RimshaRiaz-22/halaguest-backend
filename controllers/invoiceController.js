@@ -162,6 +162,7 @@ exports.deleteInvoice = (req, res) => {
 }
 exports.createInvoice = async (req, res) => {
     const Createddate = req.body.created_at;
+    let invoiceNo = Math.floor((Math.random() * 100000) + 1);
     orderModel.findById(req.body.order_id, (error, result) => {
         if (error) {
             res.send(error)
@@ -170,6 +171,7 @@ exports.createInvoice = async (req, res) => {
             console.log(totalAmountData)
             const Invoice = new invoiceModel({
                 _id: mongoose.Types.ObjectId(),
+                InvoiceNo:invoiceNo,
                 order_id: req.body.order_id,
                 hotel_id: result.hotel_id,
                 guest_id: result.guest_id,

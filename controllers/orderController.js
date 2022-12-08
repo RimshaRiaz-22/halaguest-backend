@@ -1025,7 +1025,7 @@ exports.createOrder = async (req, res) => {
     canceled_by: req.body.canceled_by,
     canceled_by_id: req.body.canceled_by_id,
     driver_id: req.body.driver_id,
-    invoiceStatus:'unbilled',
+    invoiceStatus:'uninvoiced',
 
   });
   try {
@@ -1160,15 +1160,16 @@ exports.updateOrderStatus = async (req, res) => {
                         console.log('pensinf')
                         const updateData1 = {
                                 status:'completed',
-                                invoiceStatus: 'unbilled'
+                                invoiceStatus: req.body.invoiceStatus
                         }
                         const options1 = {
                             new: true
                         }
-                        orderModel.findByIdAndUpdate(req.body.order_id, updateData1, options1, (error, result) => {
+                        orderModel.findByIdAndUpdate(req.body._id, updateData1, options1, (error, result) => {
                             if (error) {
                                 res.send(error)
                             } else {
+                              // res.json(result)
                             }
                         })
 

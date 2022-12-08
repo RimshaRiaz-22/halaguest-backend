@@ -49,6 +49,8 @@ app.use("/api/RatingGuest" , require("./routes/ratingGuestRoute"));
 app.use("/api/privacyPolicy" , require("./routes/privacyPolicyRoute"));
 app.use("/api/termsAndConditions" , require("./routes/termsAndConditionsRoute"));
 
+app.use("/api/invoiceAdmin" , require("./routes/invoiceAdminRoute"));
+
 
 
 app.use('/upload-image', require('./upload-image'))

@@ -74,7 +74,7 @@ const orderSchema = new mongoose.Schema({
     }],
     invoiceStatus: {
         type: String,
-        enum: ['billed', 'unbilled']
+        enum: ['billed', 'unbilled','uninvoiced','null']
     }
 },
     {
