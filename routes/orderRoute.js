@@ -38,6 +38,10 @@ router.get("/driverOrdersCancel/:driverId" , controller.getDriverOrdersCancel);
 router.put("/AcceptOrder" , controller.AcceptOrder);
 // invoice 
 router.post("/getOrdersByInvoiceStatus" , controller.getOrdersByInvoiceStatus);
+router.post("/getOrderWithoutInvoicing" , controller.getOrderWithoutInvoicing);
+router.post("/checkRideStatus" , controller.checkRideStatus);
+router.post("/updateRideStatus" , controller.updateRideStatus);
+
 
 module.exports = router;
 

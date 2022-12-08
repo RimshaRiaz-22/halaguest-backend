@@ -68,13 +68,18 @@ const orderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'dispacher'
     },
-    Invoice: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'invoice'
-    }],
+    // Invoice: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'invoice'
+    // }],
     invoiceStatus: {
         type: String,
-        enum: ['billed', 'unbilled','uninvoiced','null']
+        enum: ['billed', 'unbilled']
+    },
+    invoicing:Boolean,
+    rideStatus:{
+        type: String,
+        enum: ['none', 'riding','reached']
     }
 },
     {

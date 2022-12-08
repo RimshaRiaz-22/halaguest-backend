@@ -6,9 +6,13 @@ const invoiceAdminSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'order'
     }],
+    hotel_id:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'hotel'
+    },
     status: {
         type: String,
-        enum: ['billed', 'unbilled']
+        enum: ['pending', 'completed']
     },
     totalAmount:String,
     created_at:String

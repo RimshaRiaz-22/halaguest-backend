@@ -133,7 +133,7 @@ exports.getHotelOrders = (req, res) => {
   orderModel.find({ hotel_id: HotelId }, function (err, foundResult) {
     try {
       res.json(foundResult)
-      
+
     } catch (err) {
       res.json(err)
     }
@@ -1025,7 +1025,9 @@ exports.createOrder = async (req, res) => {
     canceled_by: req.body.canceled_by,
     canceled_by_id: req.body.canceled_by_id,
     driver_id: req.body.driver_id,
-    invoiceStatus:'uninvoiced',
+    invoiceStatus: 'unbilled',
+    invoicing: false,
+    rideStatus:'none'
 
   });
   try {
@@ -1131,72 +1133,19 @@ exports.updateOrder = async (req, res) => {
 
 }
 exports.updateOrderStatus = async (req, res) => {
-  // socket.disconnect()
-  if (req.body.status === 'completed') {
-    const Createddate = req.body.created_at;
-    orderModel.findById(req.body._id, (error, result) => {
-        if (error) {
-            res.send(error)
-        } else {
-          // res.send(result)
-            const totalAmountData = parseFloat(result.total_amount)
-            console.log(totalAmountData)
-            const Invoice = new invoiceModel({
-                _id: mongoose.Types.ObjectId(),
-                order_id: req.body.order_id,
-                hotel_id: result.hotel_id,
-                guest_id: result.guest_id,
-                driver_id: result.driver_id,
-                dispacher_id:result.dispacher_id,
-                status:'pending',
-                totalAmount: totalAmountData,
-                created_at: moment(Createddate).format("DD/MM/YYYY"),
-            })
-            Invoice.save((error, result) => {
-                if (error) {
-                    res.send(error)
-                } else {
-                    res.send(result)
-                        console.log('pensinf')
-                        const updateData1 = {
-                                status:'completed',
-                                invoiceStatus: req.body.invoiceStatus
-                        }
-                        const options1 = {
-                            new: true
-                        }
-                        orderModel.findByIdAndUpdate(req.body._id, updateData1, options1, (error, result) => {
-                            if (error) {
-                                res.send(error)
-                            } else {
-                              // res.json(result)
-                            }
-                        })
-
-                }
-            })
-        }
-    })
-    
-  } else {
-    const updateData = {
-      status: req.body.status,
-      invoiceStatus:req.body.invoiceStatus
-
-
-    }
-    const options = {
-      new: true
-    }
-    orderModel.findByIdAndUpdate(req.body._id, updateData, options, (error, result) => {
-      if (error) {
-        res.send(error)
-      } else {
-        res.send(result)
-      }
-
-    })
+  const updateData1 = {
+    status: req.body.status,
   }
+  const options1 = {
+    new: true
+  }
+  orderModel.findByIdAndUpdate(req.body._id, updateData1, options1, (error, result) => {
+    if (error) {
+      res.send(error)
+    } else {
+      res.json(result)
+    }
+  })
 
 
 }
@@ -1207,88 +1156,89 @@ exports.updateOrderStatusOngoing = async (req, res) => {
       // res.json(foundResult[0].driver_id)
       // driverModel.find({ _id: foundResult[0].driver_id }, function (err, foundResult) {
       //   try {
-          // res.json(foundResult)
-          const driver_lat = req.body.driver_lat;
-          const driver_lng = req.body.driver_log;
-          const updateData = {
-            status: req.body.status,
-            driver_Lat:driver_lat,
-            driver_Long:driver_lng,
-            driver_location: {
-              type: 'Point',
-              coordinates: [parseFloat(driver_lng), parseFloat(driver_lat)]
-            },
-          }
-          const options = {
-            new: true
-          }
-          orderModel.findByIdAndUpdate(OrderId, updateData, options, (error, result) => {
-            if (error) {
-              res.send(error)
-            } else {
-              res.send(result)
-                // Chat Room 
-        io.on("connection", (socket) => {
-          socket.on('join', ({ name, room }, callback) => {
+      // res.json(foundResult)
+      const driver_lat = req.body.driver_lat;
+      const driver_lng = req.body.driver_log;
+      const updateData = {
+        status: req.body.status,
+        driver_Lat: driver_lat,
+        driver_Long: driver_lng,
+        driver_location: {
+          type: 'Point',
+          coordinates: [parseFloat(driver_lng), parseFloat(driver_lat)]
+        },
+        rideStatus:'riding'
+      }
+      const options = {
+        new: true
+      }
+      orderModel.findByIdAndUpdate(OrderId, updateData, options, (error, result) => {
+        if (error) {
+          res.send(error)
+        } else {
+          res.send(result)
+          // Chat Room 
+          io.on("connection", (socket) => {
+            socket.on('join', ({ name, room }, callback) => {
 
-            const { error, user } = addUser(
-              { id: socket.id, name, room });
+              const { error, user } = addUser(
+                { id: socket.id, name, room });
 
-            if (error) return callback(error);
+              if (error) return callback(error);
 
-            // Emit will send message to the user
-            // who had joined
-            socket.emit('message', {
-              user: 'admin', text:
-                `${user.name},
+              // Emit will send message to the user
+              // who had joined
+              socket.emit('message', {
+                user: 'admin', text:
+                  `${user.name},
                   welcome to room ${user.room}.`
-            });
-
-            // Broadcast will send message to everyone
-            // in the room except the joined user
-            socket.broadcast.to(user.room)
-              .emit('message', {
-                user: "admin",
-                text: `${user.name}, has joined`
               });
 
-            socket.join(user.room);
-
-            io.to(user.room).emit('roomData', {
-              room: user.room,
-              users: getUsersInRoom(user.room)
-            });
-            callback();
-          })
-
-          socket.on('sendMessage', (message, callback) => {
-
-            const user = getUser(socket.id);
-            io.to(user.room).emit('message',
-              { user: user.name, text: message });
-
-            io.to(user.room).emit('roomData', {
-              room: user.room,
-              users: getUsersInRoom(user.room)
-            });
-            callback();
-          })
-
-          socket.on('disconnect', () => {
-            const user = removeUser(socket.id);
-            if (user) {
-              io.to(user.room).emit('message',
-                {
-                  user: 'admin', text:
-                    `${user.name} had left`
+              // Broadcast will send message to everyone
+              // in the room except the joined user
+              socket.broadcast.to(user.room)
+                .emit('message', {
+                  user: "admin",
+                  text: `${user.name}, has joined`
                 });
-            }
-          })
 
-        })
-            }
+              socket.join(user.room);
+
+              io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room)
+              });
+              callback();
+            })
+
+            socket.on('sendMessage', (message, callback) => {
+
+              const user = getUser(socket.id);
+              io.to(user.room).emit('message',
+                { user: user.name, text: message });
+
+              io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room)
+              });
+              callback();
+            })
+
+            socket.on('disconnect', () => {
+              const user = removeUser(socket.id);
+              if (user) {
+                io.to(user.room).emit('message',
+                  {
+                    user: 'admin', text:
+                      `${user.name} had left`
+                  });
+              }
+            })
 
           })
+        }
+
+      })
 
       //   } catch (err) {
       //     res.json(err)
@@ -1394,7 +1344,7 @@ exports.AcceptOrder = async (req, res) => {
         // io.on('connection', (socket) => {
         //   socket.broadcast.emit('hi');
         // });
-      
+
 
 
       }).populate('guest_id').populate('driver_id').populate('hotel_id').populate('dispacher_id')
@@ -1405,6 +1355,71 @@ exports.AcceptOrder = async (req, res) => {
   })
 
 }
+// Get without invoicing 
+exports.getOrderWithoutInvoicing = (req, res) => {
+  orderModel.find({ invoicing: req.body.invoicing }, function (err, foundResult) {
+    try {
+      // res.json( foundResult.sort((a, b) => a.flight_date - b.flight_date))
+      res.json(foundResult)
+    } catch (err) {
+      res.json(err)
+    }
+  }).sort({ $natural: -1 })
+    .populate("condition_id")
+    .populate({
+      path: 'guest_id',
+      populate: {
+        path: 'hotel_id',
+        model: 'hotel',
+      }
+    })
+    .populate("car_type_id")
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'dispacher_id',
+        model: 'dispacher',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'vehicle_detail_id',
+        model: 'vehicle_detail',
+      }
+    })
+    .populate({
+      path: 'driver_id',
+      populate: {
+        path: 'doc_id',
+        model: 'driver_documents',
+      }
+    })
+}
+exports.checkRideStatus = (req, res) => {
+  orderModel.find({ _id: req.body.orderId }, function (err, foundResult) {
+    try {
+      res.json({rideStatus:foundResult[0].rideStatus})
+    } catch (err) {
+      res.json(err)
+    }
+  })
+}
+exports.updateRideStatus = async (req, res) => {
+  const updateData1 = {
+    rideStatus: req.body.rideStatus,
+  }
+  const options1 = {
+    new: true
+  }
+  orderModel.findByIdAndUpdate(req.body._id, updateData1, options1, (error, result) => {
+    if (error) {
+      res.send(error)
+    } else {
+      res.json(result)
+    }
+  })
 
 
+}
 
