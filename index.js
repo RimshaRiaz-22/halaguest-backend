@@ -2,7 +2,7 @@ const express = require("express")
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser")
 const app= express();
-const PORT = 5000;
+const PORT = 4000;
 const cors = require('cors');
 const socket = require("socket.io");
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -45,6 +45,13 @@ app.use("/api/Msg" , require("./routes/msgRoute"));
 app.use("/api/Order" , require("./routes/orderRoute"));
 app.use("/api/invoice" , require("./routes/invoiceRoute"));
 app.use("/api/Rating" , require("./routes/ratingRoute"));
+app.use("/api/RatingGuest" , require("./routes/ratingGuestRoute"));
+app.use("/api/privacyPolicy" , require("./routes/privacyPolicyRoute"));
+app.use("/api/termsAndConditions" , require("./routes/termsAndConditionsRoute"));
+
+app.use("/api/invoiceAdmin" , require("./routes/invoiceAdminRoute"));
+
+
 
 app.use('/upload-image', require('./upload-image'))
 app.use('/delete-image', require('./delete-image'))
@@ -58,12 +65,18 @@ const io = socket(server, {
     credentials: true,
   },
 });
+// io.on('connection', (socket) => { /* socket object may be used to send specific messages to the new connected client */
+
+//     console.log('new client connected');
+//     socket.emit('connection', null);
+// });
 
 global.onlineUsers = new Map();
 io.on("connection", (socket) => {
   global.chatSocket = socket;
   socket.on("add-user", (userId) => {
     onlineUsers.set(userId, socket.id);
+    console.log('user connected')
   });
 
   socket.on("send-msg", (data) => {

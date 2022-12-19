@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const invoiceSchema = new mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
+    InvoiceNo:String,
     order_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'order'
@@ -17,7 +18,15 @@ const invoiceSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'driver'
     },
-    status: String,
+    dispacher_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'dispacher'
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'completed']
+    },
+    totalAmount:String,
     created_at:String
 }
 );

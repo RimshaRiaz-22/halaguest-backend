@@ -19,7 +19,7 @@ exports.logins = async (req, res) => {
                         phoneno: req.body.phoneno,
                         created_at: moment(Createddate).format("DD/MM/YYYY"),
                         status: "unblock",
-                        device_token: req.body.device_token
+                        // device_token: req.body.device_token
                     });
                     try {
                         const savedHotel = diapacher.save();
@@ -61,7 +61,7 @@ exports.logins = async (req, res) => {
                         phoneno: req.body.phoneno,
                         created_at: moment(Createddate).format("DD/MM/YYYY"),
                         status: "block",
-                        device_token: req.body.device_token
+                        // device_token: req.body.device_token
                     });
                     try {
                         const savedHotel = driver.save();
@@ -102,7 +102,7 @@ exports.logins = async (req, res) => {
                         phoneno: req.body.phoneno,
                         created_at: moment(Createddate).format("DD/MM/YYYY"),
                         status: "unblock",
-                        device_token: req.body.device_token
+                        // device_token: req.body.device_token
                     });
                     try {
                         const savedHotel = Dispacher.save();
@@ -145,7 +145,7 @@ exports.logins = async (req, res) => {
                         phoneno: req.body.phoneno,
                         created_at: moment(Createddate).format("DD/MM/YYYY"),
                         status: "unblock",
-                        device_token: req.body.device_token
+                        // device_token: req.body.device_token
                     });
                     try {
                         const savedHotel = Guest.save();
